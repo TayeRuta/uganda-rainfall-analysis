@@ -2,6 +2,13 @@
 
 An analysis of 36 years of monthly rainfall over Uganda using CHIRPS satellite precipitation data. It covers long-term trends, drought episodes, the two rainy seasons, decadal shifts and ENSO links, first at the national level and then for six regions.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="figures/regional_trends_dark.png">
+  <img alt="Annual rainfall 1990–2025 with linear trends: Eastern region +7.2 mm/yr (p = 0.008), Karamoja +6.7 mm/yr (p = 0.008), Uganda national +2.3 mm/yr (not significant)" src="figures/regional_trends_light.png">
+</picture>
+
+**Read the reports:** [National report (1990–2025)](https://tayeruta.github.io/uganda-rainfall-analysis/reports/national_report.html) · [Regional report](https://tayeruta.github.io/uganda-rainfall-analysis/reports/regional_report.html)
+
 ## Key findings
 
 **National (Part 1)**
@@ -47,6 +54,7 @@ An analysis of 36 years of monthly rainfall over Uganda using CHIRPS satellite p
 ├── notebooks/
 │   ├── 01_national_analysis.ipynb   # Part 1: national trends, droughts, seasons, ENSO
 │   └── 02_regional_analysis.ipynb   # Part 2: the same analysis, per region
+├── figures/                         # README figure (light and dark versions)
 ├── reports/
 │   ├── national_report.html         # standalone write-up of Part 1
 │   └── regional_report.html         # standalone write-up of Part 2
@@ -54,7 +62,8 @@ An analysis of 36 years of monthly rainfall over Uganda using CHIRPS satellite p
 │   ├── gee/
 │   │   ├── uganda_national_rainfall_gee.js   # Earth Engine export → data/raw/uganda_monthly_rainfall.csv
 │   │   └── uganda_regional_rainfall_gee.js   # Earth Engine export → data/raw/uganda_rainfall_by_region_1990_2025.csv
-│   └── regional_pipeline.py         # regional analysis as a script → data/processed/regional_*
+│   ├── regional_pipeline.py         # regional analysis as a script → data/processed/regional_*
+│   └── make_readme_figure.py        # builds the figures/ chart from regional_results.json
 ├── LICENSE
 └── requirements.txt
 ```
@@ -121,7 +130,7 @@ Run the notebooks from inside `notebooks/`, because the data paths are relative 
 python scripts/regional_pipeline.py
 ```
 
-The HTML reports in `reports/` open directly in a browser.
+The HTML reports in `reports/` open directly in a browser, or online via the links at the top.
 
 ## Limitations
 
