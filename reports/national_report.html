@@ -1,0 +1,650 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Uganda Rainfall 1990–2025</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single 1080px report column — masthead, KPI strip, then numbered findings, each = headline + chart panel + takeaway */
+:root{
+  --bg:#f3f5f1; --panel:#ffffff; --ink:#132019; --ink-2:#4b5a51; --muted:#7a877f; --rule:#dfe4dd; --grid:#eceee9;
+  --accent:#16825a; --wet:#2b6c9e; --wet-deep:#1b4a70; --dry:#c4572e; --dry-deep:#8d3416; --neutral:#ecebe6;
+  --mam:#16825a; --son:#8a63d2; --band:#eef3ec; --chip:#e8eee6;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Public Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1411; --panel:#161d19; --ink:#eaf0eb; --ink-2:#b2beb6; --muted:#859189; --rule:#27302b; --grid:#1f2723;
+  --accent:#3fae82; --wet:#4a8cc4; --wet-deep:#8cc0ec; --dry:#d9693f; --dry-deep:#f0a283; --neutral:#2a302c;
+  --mam:#2e9e74; --son:#9277e6; --band:#1a241f; --chip:#1d2622; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1411; --panel:#161d19; --ink:#eaf0eb; --ink-2:#b2beb6; --muted:#859189; --rule:#27302b; --grid:#1f2723;
+  --accent:#3fae82; --wet:#4a8cc4; --wet-deep:#8cc0ec; --dry:#d9693f; --dry-deep:#f0a283; --neutral:#2a302c;
+  --mam:#2e9e74; --son:#9277e6; --band:#1a241f; --chip:#1d2622; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;padding-inline:20px;padding-block:0 64px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.015em}
+p{margin:0}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+
+/* masthead */
+.mast{padding-block:48px 28px;display:grid;gap:18px;border-bottom:1px solid var(--rule)}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);display:flex;gap:14px;flex-wrap:wrap}
+.eyebrow span+span{color:var(--muted)}
+.mast h1{font-size:clamp(36px,6.2vw,68px);line-height:1.02;font-weight:800;max-width:15ch}
+.mast h1 em{font-style:normal;color:var(--accent)}
+.dek{font-size:clamp(17px,2vw,20px);color:var(--ink-2);max-width:62ch;line-height:1.5}
+
+/* KPI strip */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-block:28px 8px;border-top:2px solid var(--ink)}
+.kpi{padding:18px 18px 4px 0;display:grid;gap:6px;align-content:start}
+.kpi+.kpi{padding-left:18px;border-left:1px solid var(--rule)}
+.kpi .v{font-family:var(--f-display);font-weight:700;font-size:clamp(30px,3.6vw,42px);line-height:1;font-variant-numeric:tabular-nums}
+.kpi .v small{font-size:.45em;font-weight:500;color:var(--ink-2);margin-left:3px}
+.kpi .l{font-size:14px;color:var(--ink-2);line-height:1.4}
+.tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:99px;background:var(--chip);color:var(--ink-2);max-width:100%;white-space:normal;line-height:1.3}
+.tag i{width:7px;height:7px;border-radius:50%;background:var(--muted);display:inline-block}
+.tag.dry i{background:var(--dry)} .tag.wet i{background:var(--wet)}
+
+/* summary */
+.summary{margin-block:36px 12px;display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px}
+.summary h2{font-size:14px;font-family:var(--f-mono);font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding-top:4px}
+.summary ol{margin:0;padding:0;list-style:none;display:grid;gap:14px;counter-reset:k}
+.summary li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;font-size:17px;line-height:1.5}
+.summary li::before{counter-increment:k;content:counter(k);font-family:var(--f-mono);font-size:13px;color:var(--accent);padding-top:3px}
+.summary b{font-weight:600}
+nav.toc{display:flex;flex-wrap:wrap;gap:8px;margin-block:28px 8px}
+nav.toc a{font-size:13px;color:var(--ink-2);text-decoration:none;padding:6px 12px;border:1px solid var(--rule);border-radius:99px;background:var(--panel)}
+nav.toc a:hover,nav.toc a:focus-visible{border-color:var(--accent);color:var(--ink);outline:none}
+
+/* sections */
+section.f{padding-block:56px 8px;display:grid;gap:18px;scroll-margin-top:16px}
+.f-head{display:grid;gap:10px;max-width:760px}
+.f-num{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.f-head h2{font-size:clamp(24px,3.2vw,34px);line-height:1.15;font-weight:700}
+.f-head p{color:var(--ink-2);font-size:16.5px;max-width:66ch}
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:14px;padding:20px 20px 14px;min-width:0}
+.panel-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px 24px;flex-wrap:wrap;margin-bottom:6px}
+.panel-title{font-weight:600;font-size:15px}
+.panel-sub{font-size:13px;color:var(--muted)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+.sw.line{height:3px;border-radius:2px;width:18px}
+.sw.dash{height:0;border-top:2px dashed var(--ink-2);width:18px;border-radius:0}
+.chart{width:100%;position:relative}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.note{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;font-size:15px;color:var(--ink-2);max-width:760px;padding:14px 16px;border-radius:10px;background:var(--band)}
+.note b{color:var(--ink);font-weight:600}
+.note .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);padding-top:3px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+
+/* svg text */
+svg{display:block;overflow:visible}
+svg text{font-family:var(--f-body);fill:var(--muted);font-size:11.5px}
+svg .tick text{font-family:var(--f-mono);font-size:11px}
+svg .tick line{stroke:var(--grid)}
+svg .domain{display:none}
+svg .ann,svg .ann-strong{paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round}
+svg .ann{fill:var(--ink-2);font-size:12px;font-weight:500}
+svg .ann-strong{fill:var(--ink);font-size:12.5px;font-weight:600}
+svg .lab{font-weight:600;font-size:12.5px}
+
+/* table */
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--rule)}
+th{font-weight:500;color:var(--muted);font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+td.r,th.r{text-align:right}
+tr.hi td{font-weight:600}
+.sev{display:inline-block;height:8px;border-radius:4px;background:var(--dry);vertical-align:middle}
+
+/* limits */
+.limits{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.limits h3{font-size:18px;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.limits ul{margin:0;padding-left:18px;display:grid;gap:8px;color:var(--ink-2);font-size:15px}
+.next{border-left:3px solid var(--accent);padding:4px 0 4px 18px;max-width:760px;font-size:17px}
+.next b{font-family:var(--f-display)}
+
+details{margin-top:8px}
+summary{cursor:pointer;font-weight:600;font-size:15px;padding:10px 0}
+summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--rule);font-size:13px;color:var(--muted);display:grid;gap:8px;max-width:820px}
+
+/* tooltip */
+#tip{position:fixed;pointer-events:none;z-index:20;background:var(--ink);color:var(--bg);padding:9px 12px;border-radius:8px;font-size:13px;line-height:1.45;min-width:120px;box-shadow:0 6px 24px rgba(0,0,0,.18);opacity:0;transition:opacity .12s}
+#tip .t{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.7;margin-bottom:2px}
+#tip .row{display:flex;justify-content:space-between;gap:16px}
+#tip .row b{font-family:var(--f-mono);font-weight:500}
+#tip .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+
+@media (max-width:820px){
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi:nth-child(3){padding-left:0;border-left:0}
+  .kpi:nth-child(n+3){border-top:1px solid var(--rule);margin-top:6px}
+  .summary{grid-template-columns:1fr;gap:12px}
+  .grid2,.limits{grid-template-columns:1fr}
+}
+@media (max-width:480px){ body{padding-inline:16px} .panel{padding:16px 12px 10px} }
+@media (prefers-reduced-motion:reduce){#tip{transition:none}}
+</style>
+<div id="tip" role="status" aria-live="polite"></div>
+<div class="wrap">
+
+<header class="mast">
+  <div class="eyebrow"><span>Climate brief</span><span>Uganda · national average</span><span>Jan 1990 – Dec 2025</span></div>
+  <h1>36 years of rain over Uganda: <em>stable totals, restless seasons</em></h1>
+  <p class="dek">Uganda gets about the same amount of rain each year as it did in 1990. What has changed is how unevenly it arrives: wetter and drier decades, more erratic months, and one drought in 2009 that lasted most of a year.</p>
+</header>
+
+<div class="kpis">
+  <div class="kpi"><div class="v num">1,241<small>mm</small></div><div class="l">Average annual rainfall, 1990–2025</div></div>
+  <div class="kpi"><div class="v num">+2.6<small>mm/yr</small></div><div class="l">Long-term trend</div><span class="tag"><i></i>Not significant · p = 0.14</span></div>
+  <div class="kpi"><div class="v num">509<small>mm</small></div><div class="l">Gap between the driest year (2009) and the wettest (2020)</div></div>
+  <div class="kpi"><div class="v num">8<small>months</small></div><div class="l">Longest drought on record, April – November 2009</div><span class="tag dry"><i></i>SPI-3 low −2.47σ</span></div>
+</div>
+
+<div class="summary">
+  <h2>Key takeaways</h2>
+  <ol>
+    <li><span><b>No reliable long-term trend.</b> Annual rainfall rose slightly on paper, but two separate statistical tests say the change could be chance.</span></li>
+    <li><span><b>Year-to-year swings are the real risk.</b> The driest and wettest years differ by 509 mm, about 40% of a normal year.</span></li>
+    <li><span><b>2009 stands alone.</b> Rain stayed below normal for eight straight months, twice as long as any other drought since 1990.</span></li>
+    <li><span><b>The short rains are shifting.</b> September–November totals are edging up and swinging more widely. The March–May long rains have held steady.</span></li>
+    <li><span><b>Months are getting more erratic.</b> Monthly variability rose about 12% from the 1990s to the 2010s, even though annual totals stayed flat.</span></li>
+  </ol>
+</div>
+
+<nav class="toc" aria-label="Sections">
+  <a href="#long-view">Long view</a><a href="#annual">Annual totals</a><a href="#calendar">Rain calendar</a><a href="#seasons">Two seasons</a><a href="#heatmap">Every month</a><a href="#drought">Droughts</a><a href="#decades">Decades</a><a href="#enso">El Niño</a><a href="#limits">Limits</a>
+</nav>
+
+<section class="f" id="long-view">
+  <div class="f-head">
+    <div class="f-num">01 · The long view</div>
+    <h2>A dip in 2008–09, a wetter run through the late 2010s</h2>
+    <p>Monthly rain jumps around with the seasons. The 12-month rolling average smooths that out and shows the slower movement underneath.</p>
+  </div>
+  <div class="panel">
+    <div class="panel-top">
+      <div><div class="panel-title">Monthly rainfall, mm</div><div class="panel-sub">Hover to read any month</div></div>
+      <div class="legend"><span><i class="sw" style="background:var(--wet);opacity:.35"></i>Monthly total</span><span><i class="sw line" style="background:var(--ink)"></i>12-month rolling average</span></div>
+    </div>
+    <div class="chart" id="c-monthly"></div>
+  </div>
+</section>
+
+<section class="f" id="annual">
+  <div class="f-head">
+    <div class="f-num">02 · Annual totals</div>
+    <h2>Flat on average, wide from one year to the next</h2>
+    <p>Each bar shows how far a year landed above or below the 1,241 mm average. The dashed line is the fitted trend, +2.6 mm per year, which is too small relative to the noise to call real (p = 0.14; Kendall's τ test agrees, p = 0.20).</p>
+  </div>
+  <div class="panel">
+    <div class="panel-top">
+      <div><div class="panel-title">Annual rainfall vs. 1990–2025 average</div><div class="panel-sub">mm above or below 1,241 mm</div></div>
+      <div class="legend"><span><i class="sw" style="background:var(--wet)"></i>Wetter than average</span><span><i class="sw" style="background:var(--dry)"></i>Drier than average</span><span><i class="sw dash"></i>Linear trend</span></div>
+    </div>
+    <div class="chart" id="c-annual"></div>
+  </div>
+</section>
+
+<section class="f" id="calendar">
+  <div class="f-head">
+    <div class="f-num">03 · The rain calendar</div>
+    <h2>Two rainy seasons, with April the wettest month</h2>
+    <p>Uganda's year has two peaks: the long rains (March–May) and the short rains (September–November). April averages 167 mm but has ranged from 104 to 246 mm. November is the least predictable month.</p>
+  </div>
+  <div class="panel">
+    <div class="panel-top">
+      <div><div class="panel-title">Monthly rainfall range, 1990–2025</div><div class="panel-sub">Average, typical range (middle 50% of years) and record low/high</div></div>
+      <div class="legend"><span><i class="sw" style="background:var(--wet)"></i>Typical range</span><span><i class="sw line" style="background:var(--ink)"></i>Average</span><span><i class="sw line" style="background:var(--muted);opacity:.6"></i>Record low–high</span></div>
+    </div>
+    <div class="chart" id="c-clim"></div>
+  </div>
+</section>
+
+<section class="f" id="seasons">
+  <div class="f-head">
+    <div class="f-num">04 · Two seasons</div>
+    <h2>The short rains are creeping up and getting less predictable</h2>
+    <p>The March–May long rains, the main planting season for much of the country, average 417 mm with no trend. The September–November short rains average 378 mm, are rising about 1.6 mm a year (borderline, p = 0.06) and vary more from year to year.</p>
+  </div>
+  <div class="panel">
+    <div class="panel-top">
+      <div><div class="panel-title">Seasonal rainfall totals, mm</div><div class="panel-sub">Dashed lines show each season's trend</div></div>
+      <div class="legend"><span><i class="sw line" style="background:var(--mam)"></i>Long rains · Mar–May</span><span><i class="sw line" style="background:var(--son)"></i>Short rains · Sep–Nov</span></div>
+    </div>
+    <div class="chart" id="c-seasons"></div>
+  </div>
+  <div class="note"><span class="k">Read</span><span>The long rains have a coefficient of variation of <b>11.9%</b>; the short rains <b>14.7%</b>. For planning, the short rains carry both the upside and more of the uncertainty.</span></div>
+</section>
+
+<section class="f" id="heatmap">
+  <div class="f-head">
+    <div class="f-num">05 · Every month since 1990</div>
+    <h2>Dry spells are scattered, except for one block in 2008–09</h2>
+    <p>Each cell compares one month to its own long-term norm, so a dry April and a dry January read on the same scale. Deep orange is at least 1.5 standard deviations below normal.</p>
+  </div>
+  <div class="panel">
+    <div class="panel-top">
+      <div><div class="panel-title">Rainfall anomaly by year and month</div><div class="panel-sub">Standard deviations from that month's 1990–2025 average</div></div>
+      <div class="legend" id="hm-legend"></div>
+    </div>
+    <div class="scroll"><div class="chart" id="c-heat" style="min-width:680px"></div></div>
+  </div>
+</section>
+
+<section class="f" id="drought">
+  <div class="f-head">
+    <div class="f-num">06 · Droughts</div>
+    <h2>2009 ran twice as long as any other drought</h2>
+    <p>Looking at rolling three-month totals (an SPI-3 style index) shows how long dry conditions persist. A drought here is any run at or below −1. From April to November 2009, the country never climbed back above that line.</p>
+  </div>
+  <div class="panel">
+    <div class="panel-top">
+      <div><div class="panel-title">3-month standardized precipitation index</div><div class="panel-sub">Below −1 = drought conditions</div></div>
+      <div class="legend"><span><i class="sw" style="background:var(--wet)"></i>Wetter than normal</span><span><i class="sw" style="background:var(--dry)"></i>Drier than normal</span></div>
+    </div>
+    <div class="chart" id="c-spi"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-top"><div class="panel-title">Longest drought episodes, 1990–2025</div></div>
+    <div class="scroll"><table id="t-episodes"><thead><tr><th>Period</th><th class="r">Length</th><th class="r">Lowest SPI-3</th><th>Severity</th></tr></thead><tbody></tbody></table></div>
+  </div>
+</section>
+
+<section class="f" id="decades">
+  <div class="f-head">
+    <div class="f-num">07 · Decades</div>
+    <h2>A 130 mm swing between neighbouring decades</h2>
+    <p>The 2000s were the driest decade on record here and the 2010s the wettest. Over the same period, individual months moved further from their seasonal norm.</p>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-top"><div><div class="panel-title">Average annual rainfall by decade</div><div class="panel-sub">mm · whiskers show ±1 standard deviation</div></div></div>
+      <div class="chart" id="c-dec"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-top"><div><div class="panel-title">Monthly variability by decade</div><div class="panel-sub">Coefficient of variation · higher = more erratic</div></div></div>
+      <div class="chart" id="c-cv"></div>
+    </div>
+  </div>
+  <div class="note"><span class="k">Note</span><span>The 2020s cover six years (2020–2025), so treat that decade's figures as provisional.</span></div>
+</section>
+
+<section class="f" id="enso">
+  <div class="f-head">
+    <div class="f-num">08 · El Niño and La Niña</div>
+    <h2>At national scale, El Niño years don't stand out</h2>
+    <p>El Niño is linked to wetter short rains across East Africa. In this national average, short-rains totals look almost the same across El Niño, neutral and La Niña years (p = 0.80). The signal is likely real in some regions and diluted by averaging the whole country.</p>
+  </div>
+  <div class="panel">
+    <div class="panel-top">
+      <div><div class="panel-title">Short-rains (Sep–Nov) totals by ENSO phase</div><div class="panel-sub">Each dot is one year · bar marks the group average</div></div>
+    </div>
+    <div class="chart" id="c-enso"></div>
+  </div>
+</section>
+
+<section class="f" id="limits">
+  <div class="f-head">
+    <div class="f-num">09 · Limits and next steps</div>
+    <h2>What this dataset can and can't tell us</h2>
+  </div>
+  <div class="limits">
+    <div class="panel">
+      <h3><span class="tag wet"><i></i>Good for</span></h3>
+      <ul>
+        <li>Long-term trend testing for annual and seasonal totals</li>
+        <li>The seasonal calendar: when rain usually falls</li>
+        <li>Ranking historical droughts and wet spells</li>
+        <li>Comparing decades and tracking variability</li>
+        <li>Measuring how long and how severe droughts were</li>
+        <li>Broad tests of climate drivers such as ENSO</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3><span class="tag dry"><i></i>Not suited for</span></h3>
+      <ul>
+        <li>District or regional drought risk (Karamoja is hidden in the national average)</li>
+        <li>Pinning a single year's drought on one cause</li>
+        <li>Forecasting more than about a month ahead from rainfall alone</li>
+        <li>Crop-specific impact, which needs soil and planting data</li>
+        <li>Flood or single-storm events (this is monthly data)</li>
+        <li>Formal climate-change attribution (36 years is short)</li>
+      </ul>
+    </div>
+  </div>
+  <p class="next"><b>Recommended next step.</b> Re-run the same pipeline for specific regions: Karamoja, the Lake Victoria basin and Uganda's agro-ecological zones. The sharpest droughts and the clearest El Niño signal are likely being smoothed away by the national average.</p>
+
+  <details class="panel">
+    <summary>Data table · annual and seasonal totals</summary>
+    <div class="scroll"><table id="t-annual"><thead><tr><th>Year</th><th class="r">Annual (mm)</th><th class="r">vs. average</th><th class="r">Long rains</th><th class="r">Short rains</th><th>ENSO phase</th></tr></thead><tbody></tbody></table></div>
+  </details>
+</section>
+
+<footer>
+  <p><b>Source.</b> CHIRPS daily precipitation (Climate Hazards Center, UC Santa Barbara), aggregated to monthly national averages for Uganda via Google Earth Engine.</p>
+  <p><b>Method notes.</b> Anomalies use each calendar month's 1990–2025 mean and standard deviation. SPI-3 is a simplified version that standardizes rolling three-month totals without fitting a gamma distribution. ENSO years are approximated from NOAA ONI thresholds and may differ slightly by index. Monthly persistence is weak (lag-1 autocorrelation 0.24, near zero by lag 2).</p>
+</footer>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>window.__DATA__={"monthly":[{"d":"1990-01","y":1990,"m":1,"v":38.2,"z":-0.0,"r":null,"s":null},{"d":"1990-02","y":1990,"m":2,"v":75.1,"z":1.79,"r":null,"s":null},{"d":"1990-03","y":1990,"m":3,"v":128.9,"z":0.85,"r":null,"s":1.46},{"d":"1990-04","y":1990,"m":4,"v":165.8,"z":-0.02,"r":null,"s":1.26},{"d":"1990-05","y":1990,"m":5,"v":136.1,"z":-0.37,"r":null,"s":0.29},{"d":"1990-06","y":1990,"m":6,"v":58.3,"z":-1.47,"r":null,"s":-0.84},{"d":"1990-07","y":1990,"m":7,"v":85.8,"z":-0.11,"r":102.8,"s":-0.93},{"d":"1990-08","y":1990,"m":8,"v":126.5,"z":0.29,"r":103.3,"s":-0.59},{"d":"1990-09","y":1990,"m":9,"v":112.3,"z":-0.19,"r":101.4,"s":0.01},{"d":"1990-10","y":1990,"m":10,"v":139.6,"z":-0.17,"r":99.2,"s":-0.04},{"d":"1990-11","y":1990,"m":11,"v":88.3,"z":-0.87,"r":99.7,"s":-0.68},{"d":"1990-12","y":1990,"m":12,"v":78.8,"z":0.39,"r":105.1,"s":-0.34},{"d":"1991-01","y":1991,"m":1,"v":44.7,"z":0.44,"r":107.7,"s":-0.23},{"d":"1991-02","y":1991,"m":2,"v":51.3,"z":0.53,"r":108.5,"s":0.7},{"d":"1991-03","y":1991,"m":3,"v":103.0,"z":-0.08,"r":109.5,"s":0.36},{"d":"1991-04","y":1991,"m":4,"v":171.9,"z":0.18,"r":108.6,"s":0.29},{"d":"1991-05","y":1991,"m":5,"v":200.2,"z":2.3,"r":109.9,"s":1.18},{"d":"1991-06","y":1991,"m":6,"v":90.5,"z":0.02,"r":110.9,"s":1.24},{"d":"1991-07","y":1991,"m":7,"v":94.4,"z":0.25,"r":108.0,"s":1.31},{"d":"1991-08","y":1991,"m":8,"v":138.8,"z":0.82,"r":106.3,"s":0.52},{"d":"1991-09","y":1991,"m":9,"v":102.0,"z":-0.77,"r":104.2,"s":0.22},{"d":"1991-10","y":1991,"m":10,"v":154.8,"z":0.37,"r":101.2,"s":0.35},{"d":"1991-11","y":1991,"m":11,"v":100.5,"z":-0.51,"r":98.1,"s":-0.37},{"d":"1991-12","y":1991,"m":12,"v":44.1,"z":-0.9,"r":92.3,"s":-0.45},{"d":"1992-01","y":1992,"m":1,"v":23.9,"z":-0.95,"r":93.8,"s":-1.0},{"d":"1992-02","y":1992,"m":2,"v":26.6,"z":-0.78,"r":93.5,"s":-1.23},{"d":"1992-03","y":1992,"m":3,"v":66.8,"z":-1.38,"r":90.4,"s":-1.72},{"d":"1992-04","y":1992,"m":4,"v":135.1,"z":-1.04,"r":90.5,"s":-1.88},{"d":"1992-05","y":1992,"m":5,"v":129.6,"z":-0.64,"r":91.5,"s":-1.72},{"d":"1992-06","y":1992,"m":6,"v":108.7,"z":0.85,"r":90.9,"s":-0.58},{"d":"1992-07","y":1992,"m":7,"v":91.6,"z":0.13,"r":94.0,"s":0.13},{"d":"1992-08","y":1992,"m":8,"v":101.3,"z":-0.82,"r":95.5,"s":0.06},{"d":"1992-09","y":1992,"m":9,"v":103.2,"z":-0.7,"r":96.9,"s":-0.55},{"d":"1992-10","y":1992,"m":10,"v":167.1,"z":0.81,"r":98.1,"s":-0.18},{"d":"1992-11","y":1992,"m":11,"v":92.8,"z":-0.74,"r":99.1,"s":-0.26},{"d":"1992-12","y":1992,"m":12,"v":80.9,"z":0.47,"r":102.8,"s":0.15},{"d":"1993-01","y":1993,"m":1,"v":42.0,"z":0.26,"r":102.1,"s":-0.16},{"d":"1993-02","y":1993,"m":2,"v":43.6,"z":0.12,"r":99.4,"s":0.5},{"d":"1993-03","y":1993,"m":3,"v":81.5,"z":-0.85,"r":99.0,"s":-0.45},{"d":"1993-04","y":1993,"m":4,"v":146.4,"z":-0.67,"r":98.3,"s":-0.93},{"d":"1993-05","y":1993,"m":5,"v":174.4,"z":1.23,"r":93.0,"s":-0.29},{"d":"1993-06","y":1993,"m":6,"v":100.0,"z":0.45,"r":93.5,"s":0.39},{"d":"1993-07","y":1993,"m":7,"v":59.1,"z":-1.25,"r":91.1,"s":0.21},{"d":"1993-08","y":1993,"m":8,"v":96.6,"z":-1.03,"r":90.1,"s":-0.9},{"d":"1993-09","y":1993,"m":9,"v":94.9,"z":-1.17,"r":89.1,"s":-1.45},{"d":"1993-10","y":1993,"m":10,"v":104.0,"z":-1.44,"r":90.4,"s":-1.88},{"d":"1993-11","y":1993,"m":11,"v":98.4,"z":-0.57,"r":91.2,"s":-1.45},{"d":"1993-12","y":1993,"m":12,"v":52.6,"z":-0.58,"r":90.8,"s":-1.08},{"d":"1994-01","y":1994,"m":1,"v":29.9,"z":-0.55,"r":91.1,"s":-0.78},{"d":"1994-02","y":1994,"m":2,"v":32.1,"z":-0.49,"r":95.3,"s":-0.75},{"d":"1994-03","y":1994,"m":3,"v":97.1,"z":-0.29,"r":97.9,"s":-0.66},{"d":"1994-04","y":1994,"m":4,"v":155.8,"z":-0.36,"r":98.2,"s":-0.63},{"d":"1994-05","y":1994,"m":5,"v":169.7,"z":1.03,"r":101.0,"s":0.12},{"d":"1994-06","y":1994,"m":6,"v":102.9,"z":0.59,"r":105.2,"s":0.54},{"d":"1994-07","y":1994,"m":7,"v":109.1,"z":0.88,"r":105.2,"s":1.24},{"d":"1994-08","y":1994,"m":8,"v":128.2,"z":0.36,"r":104.8,"s":0.87},{"d":"1994-09","y":1994,"m":9,"v":99.0,"z":-0.94,"r":105.4,"s":0.24},{"d":"1994-10","y":1994,"m":10,"v":137.3,"z":-0.25,"r":106.3,"s":-0.34},{"d":"1994-11","y":1994,"m":11,"v":148.7,"z":0.91,"r":107.6,"s":0.13},{"d":"1994-12","y":1994,"m":12,"v":52.5,"z":-0.58,"r":105.7,"s":0.12},{"d":"1995-01","y":1995,"m":1,"v":25.4,"z":-0.85,"r":104.3,"s":0.03},{"d":"1995-02","y":1995,"m":2,"v":38.8,"z":-0.14,"r":104.3,"s":-0.7},{"d":"1995-03","y":1995,"m":3,"v":108.4,"z":0.11,"r":101.1,"s":-0.31},{"d":"1995-04","y":1995,"m":4,"v":170.7,"z":0.14,"r":103.1,"s":0.11},{"d":"1995-05","y":1995,"m":5,"v":147.2,"z":0.09,"r":103.8,"s":0.19},{"d":"1995-06","y":1995,"m":6,"v":86.2,"z":-0.18,"r":100.5,"s":0.05},{"d":"1995-07","y":1995,"m":7,"v":109.2,"z":0.88,"r":101.2,"s":0.4},{"d":"1995-08","y":1995,"m":8,"v":89.9,"z":-1.32,"r":104.3,"s":-0.28},{"d":"1995-09","y":1995,"m":9,"v":122.5,"z":0.39,"r":105.3,"s":-0.05},{"d":"1995-10","y":1995,"m":10,"v":146.6,"z":0.08,"r":106.8,"s":-0.47},{"d":"1995-11","y":1995,"m":11,"v":109.0,"z":-0.26,"r":105.4,"s":0.01},{"d":"1995-12","y":1995,"m":12,"v":60.2,"z":-0.3,"r":105.2,"s":-0.21},{"d":"1996-01","y":1996,"m":1,"v":63.4,"z":1.68,"r":106.5,"s":0.14},{"d":"1996-02","y":1996,"m":2,"v":50.7,"z":0.49,"r":105.2,"s":0.69},{"d":"1996-03","y":1996,"m":3,"v":126.1,"z":0.75,"r":109.0,"s":1.41},{"d":"1996-04","y":1996,"m":4,"v":153.2,"z":-0.44,"r":109.5,"s":0.37},{"d":"1996-05","y":1996,"m":5,"v":145.8,"z":0.04,"r":107.9,"s":0.17},{"d":"1996-06","y":1996,"m":6,"v":101.2,"z":0.51,"r":109.0,"s":-0.03},{"d":"1996-07","y":1996,"m":7,"v":93.1,"z":0.19,"r":108.5,"s":0.35},{"d":"1996-08","y":1996,"m":8,"v":136.6,"z":0.73,"r":107.6,"s":0.68},{"d":"1996-09","y":1996,"m":9,"v":127.7,"z":0.68,"r":104.6,"s":0.65},{"d":"1996-10","y":1996,"m":10,"v":127.6,"z":-0.6,"r":101.7,"s":0.27},{"d":"1996-11","y":1996,"m":11,"v":121.8,"z":0.12,"r":107.5,"s":-0.01},{"d":"1996-12","y":1996,"m":12,"v":55.2,"z":-0.48,"r":105.9,"s":-0.37},{"d":"1997-01","y":1997,"m":1,"v":51.9,"z":0.91,"r":104.4,"s":0.07},{"d":"1997-02","y":1997,"m":2,"v":14.8,"z":-1.41,"r":104.0,"s":-0.58},{"d":"1997-03","y":1997,"m":3,"v":92.0,"z":-0.48,"r":100.7,"s":-0.67},{"d":"1997-04","y":1997,"m":4,"v":222.0,"z":1.84,"r":95.4,"s":0.35},{"d":"1997-05","y":1997,"m":5,"v":127.3,"z":-0.74,"r":98.5,"s":0.5},{"d":"1997-06","y":1997,"m":6,"v":82.5,"z":-0.36,"r":103.7,"s":0.61},{"d":"1997-07","y":1997,"m":7,"v":88.5,"z":-0.0,"r":109.5,"s":-0.54},{"d":"1997-08","y":1997,"m":8,"v":97.0,"z":-1.01,"r":111.1,"s":-0.65},{"d":"1997-09","y":1997,"m":9,"v":64.2,"z":-2.9,"r":113.6,"s":-1.47},{"d":"1997-10","y":1997,"m":10,"v":165.1,"z":0.74,"r":113.5,"s":-1.19},{"d":"1997-11","y":1997,"m":11,"v":184.3,"z":1.96,"r":107.7,"s":0.64},{"d":"1997-12","y":1997,"m":12,"v":124.9,"z":2.11,"r":109.1,"s":2.07},{"d":"1998-01","y":1998,"m":1,"v":70.2,"z":2.13,"r":109.7,"s":2.73},{"d":"1998-02","y":1998,"m":2,"v":45.1,"z":0.2,"r":110.2,"s":2.27},{"d":"1998-03","y":1998,"m":3,"v":91.3,"z":-0.5,"r":111.3,"s":0.55},{"d":"1998-04","y":1998,"m":4,"v":151.8,"z":-0.49,"r":115.2,"s":-0.56},{"d":"1998-05","y":1998,"m":5,"v":144.9,"z":-0.0,"r":113.1,"s":-0.58},{"d":"1998-06","y":1998,"m":6,"v":88.9,"z":-0.06,"r":105.7,"s":-0.33},{"d":"1998-07","y":1998,"m":7,"v":94.1,"z":0.24,"r":98.2,"s":0.09},{"d":"1998-08","y":1998,"m":8,"v":111.0,"z":-0.4,"r":96.3,"s":-0.1},{"d":"1998-09","y":1998,"m":9,"v":110.5,"z":-0.29,"r":94.9,"s":-0.17},{"d":"1998-10","y":1998,"m":10,"v":140.0,"z":-0.16,"r":98.7,"s":-0.41},{"d":"1998-11","y":1998,"m":11,"v":95.5,"z":-0.66,"r":99.9,"s":-0.57},{"d":"1998-12","y":1998,"m":12,"v":35.0,"z":-1.23,"r":98.3,"s":-0.86},{"d":"1999-01","y":1999,"m":1,"v":47.0,"z":0.59,"r":96.5,"s":-0.84},{"d":"1999-02","y":1999,"m":2,"v":28.3,"z":-0.7,"r":95.8,"s":-0.86},{"d":"1999-03","y":1999,"m":3,"v":137.5,"z":1.15,"r":98.6,"s":0.71},{"d":"1999-04","y":1999,"m":4,"v":166.7,"z":0.01,"r":98.4,"s":0.43},{"d":"1999-05","y":1999,"m":5,"v":125.0,"z":-0.83,"r":99.5,"s":0.25},{"d":"1999-06","y":1999,"m":6,"v":67.7,"z":-1.03,"r":101.0,"s":-0.86},{"d":"1999-07","y":1999,"m":7,"v":86.0,"z":-0.11,"r":103.7,"s":-0.96},{"d":"1999-08","y":1999,"m":8,"v":144.0,"z":1.05,"r":101.7,"s":-0.02},{"d":"1999-09","y":1999,"m":9,"v":108.2,"z":-0.42,"r":101.4,"s":0.28},{"d":"1999-10","y":1999,"m":10,"v":152.7,"z":0.3,"r":95.6,"s":0.55},{"d":"1999-11","y":1999,"m":11,"v":113.7,"z":-0.12,"r":95.6,"s":-0.06},{"d":"1999-12","y":1999,"m":12,"v":67.3,"z":-0.03,"r":96.2,"s":0.05},{"d":"2000-01","y":2000,"m":1,"v":23.8,"z":-0.96,"r":98.1,"s":-0.36},{"d":"2000-02","y":2000,"m":2,"v":24.2,"z":-0.91,"r":98.3,"s":-0.73},{"d":"2000-03","y":2000,"m":3,"v":68.1,"z":-1.33,"r":96.2,"s":-1.75},{"d":"2000-04","y":2000,"m":4,"v":166.4,"z":-0.0,"r":96.0,"s":-1.21},{"d":"2000-05","y":2000,"m":5,"v":132.3,"z":-0.53,"r":95.3,"s":-1.01},{"d":"2000-06","y":2000,"m":6,"v":90.1,"z":-0.0,"r":95.5,"s":-0.26},{"d":"2000-07","y":2000,"m":7,"v":88.5,"z":-0.0,"r":95.7,"s":-0.27},{"d":"2000-08","y":2000,"m":8,"v":119.0,"z":-0.04,"r":97.5,"s":-0.02},{"d":"2000-09","y":2000,"m":9,"v":105.9,"z":-0.55,"r":98.0,"s":-0.21},{"d":"2000-10","y":2000,"m":10,"v":143.6,"z":-0.03,"r":103.6,"s":-0.25},{"d":"2000-11","y":2000,"m":11,"v":116.9,"z":-0.03,"r":104.6,"s":-0.21},{"d":"2000-12","y":2000,"m":12,"v":69.6,"z":0.05,"r":106.1,"s":-0.01},{"d":"2001-01","y":2001,"m":1,"v":45.8,"z":0.51,"r":106.9,"s":0.13},{"d":"2001-02","y":2001,"m":2,"v":30.1,"z":-0.6,"r":108.9,"s":-0.01},{"d":"2001-03","y":2001,"m":3,"v":134.6,"z":1.05,"r":108.5,"s":0.65},{"d":"2001-04","y":2001,"m":4,"v":178.2,"z":0.39,"r":109.8,"s":0.66},{"d":"2001-05","y":2001,"m":5,"v":150.6,"z":0.24,"r":112.9,"s":0.95},{"d":"2001-06","y":2001,"m":6,"v":100.1,"z":0.45,"r":114.4,"s":0.56},{"d":"2001-07","y":2001,"m":7,"v":112.7,"z":1.03,"r":112.1,"s":0.85},{"d":"2001-08","y":2001,"m":8,"v":113.7,"z":-0.28,"r":112.1,"s":0.58},{"d":"2001-09","y":2001,"m":9,"v":121.4,"z":0.33,"r":112.6,"s":0.47},{"d":"2001-10","y":2001,"m":10,"v":181.3,"z":1.32,"r":112.0,"s":0.81},{"d":"2001-11","y":2001,"m":11,"v":134.4,"z":0.49,"r":111.4,"s":1.07},{"d":"2001-12","y":2001,"m":12,"v":42.7,"z":-0.95,"r":108.7,"s":0.4},{"d":"2002-01","y":2002,"m":1,"v":45.8,"z":0.51,"r":106.2,"s":-0.03},{"d":"2002-02","y":2002,"m":2,"v":35.0,"z":-0.34,"r":102.3,"s":-0.54},{"d":"2002-03","y":2002,"m":3,"v":128.4,"z":0.83,"r":100.9,"s":0.62},{"d":"2002-04","y":2002,"m":4,"v":170.8,"z":0.14,"r":98.7,"s":0.47},{"d":"2002-05","y":2002,"m":5,"v":117.6,"z":-1.14,"r":95.2,"s":0.0},{"d":"2002-06","y":2002,"m":6,"v":70.5,"z":-0.91,"r":94.3,"s":-0.87},{"d":"2002-07","y":2002,"m":7,"v":66.2,"z":-0.95,"r":99.0,"s":-1.49},{"d":"2002-08","y":2002,"m":8,"v":96.9,"z":-1.01,"r":98.0,"s":-1.37},{"d":"2002-09","y":2002,"m":9,"v":95.0,"z":-1.16,"r":97.6,"s":-1.3},{"d":"2002-10","y":2002,"m":10,"v":139.3,"z":-0.18,"r":94.4,"s":-1.08},{"d":"2002-11","y":2002,"m":11,"v":123.2,"z":0.16,"r":94.7,"s":-0.37},{"d":"2002-12","y":2002,"m":12,"v":99.1,"z":1.15,"r":98.1,"s":0.45},{"d":"2003-01","y":2003,"m":1,"v":34.5,"z":-0.25,"r":102.0,"s":0.56},{"d":"2003-02","y":2003,"m":2,"v":30.0,"z":-0.6,"r":104.7,"s":0.43},{"d":"2003-03","y":2003,"m":3,"v":90.1,"z":-0.54,"r":107.9,"s":-0.77},{"d":"2003-04","y":2003,"m":4,"v":173.9,"z":0.25,"r":108.8,"s":-0.43},{"d":"2003-05","y":2003,"m":5,"v":158.0,"z":0.54,"r":106.1,"s":0.11},{"d":"2003-06","y":2003,"m":6,"v":117.6,"z":1.26,"r":105.1,"s":0.97},{"d":"2003-07","y":2003,"m":7,"v":98.4,"z":0.42,"r":102.1,"s":1.08},{"d":"2003-08","y":2003,"m":8,"v":136.0,"z":0.7,"r":104.3,"s":1.12},{"d":"2003-09","y":2003,"m":9,"v":105.0,"z":-0.6,"r":105.6,"s":0.3},{"d":"2003-10","y":2003,"m":10,"v":108.0,"z":-1.3,"r":105.0,"s":-0.69},{"d":"2003-11","y":2003,"m":11,"v":111.1,"z":-0.2,"r":105.0,"s":-0.97},{"d":"2003-12","y":2003,"m":12,"v":62.9,"z":-0.2,"r":100.8,"s":-0.7},{"d":"2004-01","y":2004,"m":1,"v":60.3,"z":1.48,"r":95.8,"s":0.17},{"d":"2004-02","y":2004,"m":2,"v":45.6,"z":0.22,"r":93.3,"s":0.55},{"d":"2004-03","y":2004,"m":3,"v":82.8,"z":-0.8,"r":91.9,"s":0.1},{"d":"2004-04","y":2004,"m":4,"v":173.8,"z":0.24,"r":93.0,"s":-0.24},{"d":"2004-05","y":2004,"m":5,"v":107.7,"z":-1.55,"r":93.9,"s":-1.06},{"d":"2004-06","y":2004,"m":6,"v":57.5,"z":-1.5,"r":93.4,"s":-1.27},{"d":"2004-07","y":2004,"m":7,"v":68.9,"z":-0.84,"r":93.6,"s":-1.92},{"d":"2004-08","y":2004,"m":8,"v":118.7,"z":-0.06,"r":91.4,"s":-1.12},{"d":"2004-09","y":2004,"m":9,"v":118.8,"z":0.18,"r":90.1,"s":-0.35},{"d":"2004-10","y":2004,"m":10,"v":118.9,"z":-0.91,"r":92.2,"s":-0.52},{"d":"2004-11","y":2004,"m":11,"v":105.0,"z":-0.38,"r":89.1,"s":-0.63},{"d":"2004-12","y":2004,"m":12,"v":65.0,"z":-0.12,"r":94.5,"s":-0.6},{"d":"2005-01","y":2005,"m":1,"v":34.1,"z":-0.27,"r":96.2,"s":-0.37},{"d":"2005-02","y":2005,"m":2,"v":30.2,"z":-0.59,"r":97.4,"s":-0.4},{"d":"2005-03","y":2005,"m":3,"v":107.4,"z":0.08,"r":96.7,"s":-0.33},{"d":"2005-04","y":2005,"m":4,"v":136.4,"z":-1.0,"r":96.6,"s":-0.87},{"d":"2005-05","y":2005,"m":5,"v":173.1,"z":1.17,"r":96.0,"s":0.0},{"d":"2005-06","y":2005,"m":6,"v":77.4,"z":-0.59,"r":92.8,"s":-0.3},{"d":"2005-07","y":2005,"m":7,"v":83.5,"z":-0.22,"r":89.6,"s":0.22},{"d":"2005-08","y":2005,"m":8,"v":111.1,"z":-0.39,"r":89.0,"s":-0.56},{"d":"2005-09","y":2005,"m":9,"v":117.3,"z":0.1,"r":89.8,"s":-0.24},{"d":"2005-10","y":2005,"m":10,"v":111.2,"z":-1.18,"r":90.6,"s":-0.9},{"d":"2005-11","y":2005,"m":11,"v":66.9,"z":-1.5,"r":95.2,"s":-1.48},{"d":"2005-12","y":2005,"m":12,"v":26.9,"z":-1.53,"r":94.6,"s":-1.8},{"d":"2006-01","y":2006,"m":1,"v":26.4,"z":-0.79,"r":93.7,"s":-1.85},{"d":"2006-02","y":2006,"m":2,"v":39.6,"z":-0.1,"r":92.2,"s":-1.28},{"d":"2006-03","y":2006,"m":3,"v":117.2,"z":0.43,"r":92.5,"s":-0.04},{"d":"2006-04","y":2006,"m":4,"v":191.5,"z":0.83,"r":93.0,"s":0.78},{"d":"2006-05","y":2006,"m":5,"v":166.0,"z":0.88,"r":95.0,"s":1.17},{"d":"2006-06","y":2006,"m":6,"v":66.9,"z":-1.07,"r":102.0,"s":0.46},{"d":"2006-07","y":2006,"m":7,"v":64.9,"z":-1.01,"r":106.6,"s":-0.56},{"d":"2006-08","y":2006,"m":8,"v":115.6,"z":-0.19,"r":107.8,"s":-1.08},{"d":"2006-09","y":2006,"m":9,"v":123.0,"z":0.42,"r":110.4,"s":-0.41},{"d":"2006-10","y":2006,"m":10,"v":134.8,"z":-0.34,"r":108.1,"s":-0.15},{"d":"2006-11","y":2006,"m":11,"v":151.6,"z":0.99,"r":103.6,"s":0.57},{"d":"2006-12","y":2006,"m":12,"v":82.3,"z":0.52,"r":102.4,"s":0.55},{"d":"2007-01","y":2007,"m":1,"v":40.5,"z":0.16,"r":106.1,"s":0.88},{"d":"2007-02","y":2007,"m":2,"v":70.0,"z":1.52,"r":110.9,"s":1.13},{"d":"2007-03","y":2007,"m":3,"v":90.4,"z":-0.53,"r":113.3,"s":0.41},{"d":"2007-04","y":2007,"m":4,"v":136.7,"z":-0.99,"r":115.6,"s":-0.36},{"d":"2007-05","y":2007,"m":5,"v":152.1,"z":0.3,"r":112.0,"s":-0.76},{"d":"2007-06","y":2007,"m":6,"v":110.8,"z":0.95,"r":106.9,"s":-0.04},{"d":"2007-07","y":2007,"m":7,"v":123.3,"z":1.48,"r":104.8,"s":1.34},{"d":"2007-08","y":2007,"m":8,"v":144.5,"z":1.07,"r":105.2,"s":1.68},{"d":"2007-09","y":2007,"m":9,"v":150.0,"z":1.95,"r":102.7,"s":1.84},{"d":"2007-10","y":2007,"m":10,"v":91.5,"z":-1.89,"r":104.2,"s":0.13},{"d":"2007-11","y":2007,"m":11,"v":90.2,"z":-0.81,"r":101.5,"s":-0.83},{"d":"2007-12","y":2007,"m":12,"v":57.2,"z":-0.41,"r":99.7,"s":-1.32},{"d":"2008-01","y":2008,"m":1,"v":45.9,"z":0.52,"r":97.0,"s":-0.56},{"d":"2008-02","y":2008,"m":2,"v":39.3,"z":-0.11,"r":94.8,"s":-0.08},{"d":"2008-03","y":2008,"m":3,"v":108.7,"z":0.12,"r":94.8,"s":0.23},{"d":"2008-04","y":2008,"m":4,"v":104.3,"z":-2.07,"r":93.2,"s":-1.36},{"d":"2008-05","y":2008,"m":5,"v":130.2,"z":-0.61,"r":95.1,"s":-1.49},{"d":"2008-06","y":2008,"m":6,"v":79.1,"z":-0.51,"r":93.5,"s":-1.79},{"d":"2008-07","y":2008,"m":7,"v":96.7,"z":0.35,"r":91.1,"s":-0.38},{"d":"2008-08","y":2008,"m":8,"v":143.9,"z":1.05,"r":90.7,"s":0.44},{"d":"2008-09","y":2008,"m":9,"v":130.8,"z":0.86,"r":90.9,"s":0.93},{"d":"2008-10","y":2008,"m":10,"v":115.4,"z":-1.03,"r":87.8,"s":0.23},{"d":"2008-11","y":2008,"m":11,"v":70.5,"z":-1.4,"r":90.9,"s":-1.1},{"d":"2008-12","y":2008,"m":12,"v":28.4,"z":-1.48,"r":91.5,"s":-1.67},{"d":"2009-01","y":2009,"m":1,"v":41.2,"z":0.2,"r":89.4,"s":-1.5},{"d":"2009-02","y":2009,"m":2,"v":41.7,"z":0.02,"r":85.0,"s":-0.83},{"d":"2009-03","y":2009,"m":3,"v":70.9,"z":-1.23,"r":79.9,"s":-0.79},{"d":"2009-04","y":2009,"m":4,"v":141.5,"z":-0.83,"r":76.3,"s":-1.31},{"d":"2009-05","y":2009,"m":5,"v":137.6,"z":-0.31,"r":75.8,"s":-1.35},{"d":"2009-06","y":2009,"m":6,"v":54.2,"z":-1.66,"r":78.2,"s":-1.39},{"d":"2009-07","y":2009,"m":7,"v":44.3,"z":-1.89,"r":83.3,"s":-1.88},{"d":"2009-08","y":2009,"m":8,"v":82.5,"z":-1.64,"r":83.1,"s":-2.47},{"d":"2009-09","y":2009,"m":9,"v":87.9,"z":-1.57,"r":88.1,"s":-2.16},{"d":"2009-10","y":2009,"m":10,"v":109.4,"z":-1.25,"r":92.7,"s":-2.23},{"d":"2009-11","y":2009,"m":11,"v":98.7,"z":-0.56,"r":93.7,"s":-1.47},{"d":"2009-12","y":2009,"m":12,"v":89.8,"z":0.8,"r":95.3,"s":-0.47},{"d":"2010-01","y":2010,"m":1,"v":38.6,"z":0.03,"r":99.0,"s":0.04},{"d":"2010-02","y":2010,"m":2,"v":102.2,"z":3.23,"r":101.9,"s":2.04},{"d":"2010-03","y":2010,"m":3,"v":125.3,"z":0.72,"r":103.2,"s":2.07},{"d":"2010-04","y":2010,"m":4,"v":153.5,"z":-0.43,"r":105.5,"s":1.51},{"d":"2010-05","y":2010,"m":5,"v":157.5,"z":0.52,"r":109.5,"s":0.4},{"d":"2010-06","y":2010,"m":6,"v":98.3,"z":0.37,"r":108.4,"s":0.16},{"d":"2010-07","y":2010,"m":7,"v":78.5,"z":-0.43,"r":107.5,"s":0.23},{"d":"2010-08","y":2010,"m":8,"v":98.1,"z":-0.96,"r":106.1,"s":-0.5},{"d":"2010-09","y":2010,"m":9,"v":116.0,"z":0.03,"r":100.1,"s":-0.62},{"d":"2010-10","y":2010,"m":10,"v":157.1,"z":0.46,"r":99.3,"s":-0.19},{"d":"2010-11","y":2010,"m":11,"v":85.8,"z":-0.94,"r":96.7,"s":-0.34},{"d":"2010-12","y":2010,"m":12,"v":79.1,"z":0.4,"r":95.6,"s":-0.12},{"d":"2011-01","y":2011,"m":1,"v":22.1,"z":-1.07,"r":96.6,"s":-0.67},{"d":"2011-02","y":2011,"m":2,"v":29.2,"z":-0.65,"r":99.2,"s":-0.37},{"d":"2011-03","y":2011,"m":3,"v":116.3,"z":0.39,"r":104.0,"s":-0.44},{"d":"2011-04","y":2011,"m":4,"v":122.7,"z":-1.46,"r":106.5,"s":-1.0},{"d":"2011-05","y":2011,"m":5,"v":144.5,"z":-0.02,"r":107.3,"s":-0.67},{"d":"2011-06","y":2011,"m":6,"v":109.4,"z":0.88,"r":114.8,"s":-0.51},{"d":"2011-07","y":2011,"m":7,"v":109.7,"z":0.9,"r":112.2,"s":0.85},{"d":"2011-08","y":2011,"m":8,"v":156.7,"z":1.61,"r":111.4,"s":1.62},{"d":"2011-09","y":2011,"m":9,"v":146.0,"z":1.72,"r":112.0,"s":1.74},{"d":"2011-10","y":2011,"m":10,"v":166.7,"z":0.8,"r":107.8,"s":1.99},{"d":"2011-11","y":2011,"m":11,"v":175.5,"z":1.7,"r":115.8,"s":1.98},{"d":"2011-12","y":2011,"m":12,"v":48.1,"z":-0.75,"r":119.3,"s":0.86},{"d":"2012-01","y":2012,"m":1,"v":12.4,"z":-1.72,"r":119.3,"s":0.2},{"d":"2012-02","y":2012,"m":2,"v":36.1,"z":-0.28,"r":119.6,"s":-1.19},{"d":"2012-03","y":2012,"m":3,"v":65.7,"z":-1.42,"r":117.8,"s":-1.8},{"d":"2012-04","y":2012,"m":4,"v":218.6,"z":1.73,"r":116.8,"s":0.16},{"d":"2012-05","y":2012,"m":5,"v":186.9,"z":1.75,"r":118.2,"s":1.1},{"d":"2012-06","y":2012,"m":6,"v":108.7,"z":0.85,"r":114.2,"s":2.29},{"d":"2012-07","y":2012,"m":7,"v":113.8,"z":1.08,"r":119.0,"s":1.83},{"d":"2012-08","y":2012,"m":8,"v":135.5,"z":0.68,"r":121.0,"s":1.24},{"d":"2012-09","y":2012,"m":9,"v":133.9,"z":1.03,"r":120.5,"s":1.16},{"d":"2012-10","y":2012,"m":10,"v":183.7,"z":1.4,"r":126.1,"s":1.63},{"d":"2012-11","y":2012,"m":11,"v":126.8,"z":0.26,"r":122.0,"s":1.2},{"d":"2012-12","y":2012,"m":12,"v":105.6,"z":1.39,"r":115.3,"s":1.23},{"d":"2013-01","y":2013,"m":1,"v":36.7,"z":-0.1,"r":112.7,"s":0.78},{"d":"2013-02","y":2013,"m":2,"v":30.0,"z":-0.6,"r":111.0,"s":0.64},{"d":"2013-03","y":2013,"m":3,"v":133.6,"z":1.02,"r":110.3,"s":0.4},{"d":"2013-04","y":2013,"m":4,"v":169.1,"z":0.09,"r":110.8,"s":0.44},{"d":"2013-05","y":2013,"m":5,"v":106.7,"z":-1.59,"r":108.0,"s":-0.15},{"d":"2013-06","y":2013,"m":6,"v":77.4,"z":-0.59,"r":105.9,"s":-0.99},{"d":"2013-07","y":2013,"m":7,"v":93.2,"z":0.2,"r":102.2,"s":-0.99},{"d":"2013-08","y":2013,"m":8,"v":127.5,"z":0.33,"r":101.2,"s":-0.01},{"d":"2013-09","y":2013,"m":9,"v":139.0,"z":1.32,"r":101.7,"s":0.7},{"d":"2013-10","y":2013,"m":10,"v":149.9,"z":0.2,"r":100.2,"s":0.81},{"d":"2013-11","y":2013,"m":11,"v":102.3,"z":-0.46,"r":96.7,"s":0.24},{"d":"2013-12","y":2013,"m":12,"v":60.7,"z":-0.28,"r":99.8,"s":-0.25},{"d":"2014-01","y":2014,"m":1,"v":24.4,"z":-0.92,"r":102.0,"s":-0.66},{"d":"2014-02","y":2014,"m":2,"v":36.8,"z":-0.24,"r":101.1,"s":-0.58},{"d":"2014-03","y":2014,"m":3,"v":115.5,"z":0.37,"r":103.6,"s":-0.21},{"d":"2014-04","y":2014,"m":4,"v":127.1,"z":-1.31,"r":102.8,"s":-0.75},{"d":"2014-05","y":2014,"m":5,"v":144.1,"z":-0.04,"r":103.1,"s":-0.61},{"d":"2014-06","y":2014,"m":6,"v":103.9,"z":0.63,"r":103.7,"s":-0.54},{"d":"2014-07","y":2014,"m":7,"v":82.1,"z":-0.27,"r":102.5,"s":0.14},{"d":"2014-08","y":2014,"m":8,"v":156.9,"z":1.62,"r":101.3,"s":0.93},{"d":"2014-09","y":2014,"m":9,"v":130.2,"z":0.83,"r":100.7,"s":0.89},{"d":"2014-10","y":2014,"m":10,"v":153.5,"z":0.33,"r":98.3,"s":1.35},{"d":"2014-11","y":2014,"m":11,"v":108.9,"z":-0.26,"r":104.4,"s":0.27},{"d":"2014-12","y":2014,"m":12,"v":47.0,"z":-0.79,"r":103.4,"s":-0.3},{"d":"2015-01","y":2015,"m":1,"v":9.6,"z":-1.91,"r":105.6,"s":-1.05},{"d":"2015-02","y":2015,"m":2,"v":29.7,"z":-0.62,"r":104.9,"s":-1.43},{"d":"2015-03","y":2015,"m":3,"v":86.8,"z":-0.66,"r":99.3,"s":-1.49},{"d":"2015-04","y":2015,"m":4,"v":199.5,"z":1.1,"r":97.0,"s":0.07},{"d":"2015-05","y":2015,"m":5,"v":132.9,"z":-0.5,"r":99.8,"s":0.05},{"d":"2015-06","y":2015,"m":6,"v":129.7,"z":1.81,"r":106.1,"s":1.23},{"d":"2015-07","y":2015,"m":7,"v":73.7,"z":-0.63,"r":108.3,"s":0.27},{"d":"2015-08","y":2015,"m":8,"v":90.1,"z":-1.31,"r":110.9,"s":-0.11},{"d":"2015-09","y":2015,"m":9,"v":102.1,"z":-0.76,"r":110.1,"s":-1.15},{"d":"2015-10","y":2015,"m":10,"v":187.2,"z":1.53,"r":110.1,"s":-0.01},{"d":"2015-11","y":2015,"m":11,"v":185.1,"z":1.98,"r":114.0,"s":1.74},{"d":"2015-12","y":2015,"m":12,"v":73.4,"z":0.2,"r":113.8,"s":1.66},{"d":"2016-01","y":2016,"m":1,"v":41.1,"z":0.19,"r":109.6,"s":1.32},{"d":"2016-02","y":2016,"m":2,"v":19.4,"z":-1.17,"r":109.2,"s":-0.29},{"d":"2016-03","y":2016,"m":3,"v":87.4,"z":-0.64,"r":108.5,"s":-0.94},{"d":"2016-04","y":2016,"m":4,"v":246.3,"z":2.66,"r":109.0,"s":0.89},{"d":"2016-05","y":2016,"m":5,"v":130.2,"z":-0.62,"r":104.0,"s":0.96},{"d":"2016-06","y":2016,"m":6,"v":78.7,"z":-0.53,"r":97.5,"s":1.09},{"d":"2016-07","y":2016,"m":7,"v":69.4,"z":-0.82,"r":94.2,"s":-0.97},{"d":"2016-08","y":2016,"m":8,"v":81.4,"z":-1.69,"r":92.6,"s":-1.45},{"d":"2016-09","y":2016,"m":9,"v":108.3,"z":-0.41,"r":98.0,"s":-1.28},{"d":"2016-10","y":2016,"m":10,"v":127.7,"z":-0.6,"r":98.7,"s":-1.39},{"d":"2016-11","y":2016,"m":11,"v":107.1,"z":-0.32,"r":90.3,"s":-0.63},{"d":"2016-12","y":2016,"m":12,"v":33.9,"z":-1.27,"r":91.7,"s":-0.89},{"d":"2017-01","y":2017,"m":1,"v":21.9,"z":-1.09,"r":91.5,"s":-1.1},{"d":"2017-02","y":2017,"m":2,"v":83.9,"z":2.25,"r":97.0,"s":-0.15},{"d":"2017-03","y":2017,"m":3,"v":95.5,"z":-0.35,"r":100.6,"s":0.42},{"d":"2017-04","y":2017,"m":4,"v":145.8,"z":-0.69,"r":103.4,"s":0.27},{"d":"2017-05","y":2017,"m":5,"v":146.4,"z":0.06,"r":103.2,"s":-0.59},{"d":"2017-06","y":2017,"m":6,"v":76.5,"z":-0.63,"r":103.2,"s":-0.67},{"d":"2017-07","y":2017,"m":7,"v":136.1,"z":2.03,"r":102.4,"s":0.76},{"d":"2017-08","y":2017,"m":8,"v":124.4,"z":0.19,"r":102.3,"s":0.8},{"d":"2017-09","y":2017,"m":9,"v":141.5,"z":1.46,"r":99.1,"s":1.53},{"d":"2017-10","y":2017,"m":10,"v":125.6,"z":-0.67,"r":105.4,"s":0.26},{"d":"2017-11","y":2017,"m":11,"v":107.1,"z":-0.32,"r":112.3,"s":-0.06},{"d":"2017-12","y":2017,"m":12,"v":23.7,"z":-1.65,"r":115.6,"s":-1.06},{"d":"2018-01","y":2018,"m":1,"v":20.5,"z":-1.18,"r":119.7,"s":-1.3},{"d":"2018-02","y":2018,"m":2,"v":46.2,"z":0.26,"r":113.6,"s":-1.33},{"d":"2018-03","y":2018,"m":3,"v":171.1,"z":2.36,"r":114.4,"s":1.35},{"d":"2018-04","y":2018,"m":4,"v":227.8,"z":2.04,"r":111.3,"s":2.94},{"d":"2018-05","y":2018,"m":5,"v":187.1,"z":1.76,"r":111.3,"s":3.43},{"d":"2018-06","y":2018,"m":6,"v":125.8,"z":1.63,"r":109.6,"s":2.83},{"d":"2018-07","y":2018,"m":7,"v":62.8,"z":-1.1,"r":115.8,"s":1.11},{"d":"2018-08","y":2018,"m":8,"v":134.1,"z":0.62,"r":116.7,"s":0.5},{"d":"2018-09","y":2018,"m":9,"v":103.6,"z":-0.68,"r":116.1,"s":-0.46},{"d":"2018-10","y":2018,"m":10,"v":126.0,"z":-0.65,"r":108.5,"s":-0.36},{"d":"2018-11","y":2018,"m":11,"v":85.9,"z":-0.94,"r":101.3,"s":-1.12},{"d":"2018-12","y":2018,"m":12,"v":99.2,"z":1.15,"r":99.6,"s":-0.28},{"d":"2019-01","y":2019,"m":1,"v":30.5,"z":-0.51,"r":100.1,"s":-0.16},{"d":"2019-02","y":2019,"m":2,"v":39.8,"z":-0.08,"r":103.5,"s":0.57},{"d":"2019-03","y":2019,"m":3,"v":79.3,"z":-0.93,"r":103.5,"s":-0.9},{"d":"2019-04","y":2019,"m":4,"v":141.9,"z":-0.82,"r":104.4,"s":-1.16},{"d":"2019-05","y":2019,"m":5,"v":165.9,"z":0.87,"r":112.2,"s":-0.6},{"d":"2019-06","y":2019,"m":6,"v":131.8,"z":1.91,"r":118.9,"s":0.77},{"d":"2019-07","y":2019,"m":7,"v":103.8,"z":0.65,"r":122.0,"s":1.66},{"d":"2019-08","y":2019,"m":8,"v":134.2,"z":0.62,"r":124.3,"s":1.49},{"d":"2019-09","y":2019,"m":9,"v":114.6,"z":-0.06,"r":124.4,"s":0.56},{"d":"2019-10","y":2019,"m":10,"v":219.6,"z":2.68,"r":131.9,"s":1.97},{"d":"2019-11","y":2019,"m":11,"v":166.2,"z":1.42,"r":135.6,"s":2.2},{"d":"2019-12","y":2019,"m":12,"v":136.2,"z":2.53,"r":132.6,"s":2.75},{"d":"2020-01","y":2020,"m":1,"v":57.7,"z":1.3,"r":129.8,"s":2.39},{"d":"2020-02","y":2020,"m":2,"v":41.2,"z":-0.01,"r":130.5,"s":2.15},{"d":"2020-03","y":2020,"m":3,"v":169.3,"z":2.3,"r":131.7,"s":2.12},{"d":"2020-04","y":2020,"m":4,"v":187.2,"z":0.69,"r":133.6,"s":1.88},{"d":"2020-05","y":2020,"m":5,"v":128.8,"z":-0.67,"r":129.9,"s":1.39},{"d":"2020-06","y":2020,"m":6,"v":99.4,"z":0.42,"r":131.0,"s":0.28},{"d":"2020-07","y":2020,"m":7,"v":111.7,"z":0.99,"r":125.7,"s":0.35},{"d":"2020-08","y":2020,"m":8,"v":148.0,"z":1.23,"r":125.1,"s":1.27},{"d":"2020-09","y":2020,"m":9,"v":138.3,"z":1.28,"r":125.0,"s":1.45},{"d":"2020-10","y":2020,"m":10,"v":175.3,"z":1.1,"r":117.4,"s":1.82},{"d":"2020-11","y":2020,"m":11,"v":179.0,"z":1.8,"r":116.1,"s":2.06},{"d":"2020-12","y":2020,"m":12,"v":72.7,"z":0.17,"r":118.0,"s":1.39},{"d":"2021-01","y":2021,"m":1,"v":50.9,"z":0.85,"r":114.9,"s":1.38},{"d":"2021-02","y":2021,"m":2,"v":38.8,"z":-0.14,"r":111.1,"s":0.4},{"d":"2021-03","y":2021,"m":3,"v":78.4,"z":-0.96,"r":107.7,"s":-0.43},{"d":"2021-04","y":2021,"m":4,"v":171.7,"z":0.17,"r":106.7,"s":-0.54},{"d":"2021-05","y":2021,"m":5,"v":151.4,"z":0.27,"r":102.5,"s":-0.31},{"d":"2021-06","y":2021,"m":6,"v":62.1,"z":-1.29,"r":94.6,"s":-0.33},{"d":"2021-07","y":2021,"m":7,"v":67.1,"z":-0.91,"r":93.4,"s":-0.92},{"d":"2021-08","y":2021,"m":8,"v":106.9,"z":-0.57,"r":94.8,"s":-1.31},{"d":"2021-09","y":2021,"m":9,"v":125.7,"z":0.57,"r":97.3,"s":-0.48},{"d":"2021-10","y":2021,"m":10,"v":124.7,"z":-0.7,"r":98.4,"s":-0.51},{"d":"2021-11","y":2021,"m":11,"v":84.9,"z":-0.97,"r":97.2,"s":-0.76},{"d":"2021-12","y":2021,"m":12,"v":58.1,"z":-0.37,"r":96.0,"s":-0.9},{"d":"2022-01","y":2022,"m":1,"v":67.9,"z":1.98,"r":95.8,"s":-0.25},{"d":"2022-02","y":2022,"m":2,"v":68.3,"z":1.43,"r":94.5,"s":1.17},{"d":"2022-03","y":2022,"m":3,"v":92.3,"z":-0.46,"r":98.1,"s":1.11},{"d":"2022-04","y":2022,"m":4,"v":157.1,"z":-0.31,"r":97.9,"s":0.1},{"d":"2022-05","y":2022,"m":5,"v":137.0,"z":-0.33,"r":97.4,"s":-0.61},{"d":"2022-06","y":2022,"m":6,"v":59.9,"z":-1.39,"r":100.6,"s":-0.97},{"d":"2022-07","y":2022,"m":7,"v":51.6,"z":-1.57,"r":103.8,"s":-1.61},{"d":"2022-08","y":2022,"m":8,"v":149.9,"z":1.31,"r":100.0,"s":-0.78},{"d":"2022-09","y":2022,"m":9,"v":122.8,"z":0.41,"r":96.4,"s":0.0},{"d":"2022-10","y":2022,"m":10,"v":118.5,"z":-0.92,"r":101.8,"s":0.25},{"d":"2022-11","y":2022,"m":11,"v":124.0,"z":0.18,"r":103.7,"s":-0.23},{"d":"2022-12","y":2022,"m":12,"v":96.8,"z":1.06,"r":101.1,"s":0.13},{"d":"2023-01","y":2023,"m":1,"v":22.1,"z":-1.08,"r":106.1,"s":0.32},{"d":"2023-02","y":2023,"m":2,"v":24.7,"z":-0.88,"r":105.9,"s":-0.05},{"d":"2023-03","y":2023,"m":3,"v":156.9,"z":1.85,"r":99.1,"s":0.48},{"d":"2023-04","y":2023,"m":4,"v":180.1,"z":0.45,"r":99.0,"s":1.08},{"d":"2023-05","y":2023,"m":5,"v":105.7,"z":-1.64,"r":101.8,"s":0.52},{"d":"2023-06","y":2023,"m":6,"v":120.4,"z":1.39,"r":104.4,"s":0.09},{"d":"2023-07","y":2023,"m":7,"v":48.9,"z":-1.69,"r":103.5,"s":-1.04},{"d":"2023-08","y":2023,"m":8,"v":68.6,"z":-2.25,"r":105.7,"s":-1.28},{"d":"2023-09","y":2023,"m":9,"v":121.2,"z":0.32,"r":108.3,"s":-1.68},{"d":"2023-10","y":2023,"m":10,"v":152.9,"z":0.3,"r":101.1,"s":-0.83},{"d":"2023-11","y":2023,"m":11,"v":154.3,"z":1.07,"r":100.5,"s":0.91},{"d":"2023-12","y":2023,"m":12,"v":86.1,"z":0.67,"r":100.0,"s":0.9},{"d":"2024-01","y":2024,"m":1,"v":48.6,"z":0.69,"r":95.3,"s":1.14},{"d":"2024-02","y":2024,"m":2,"v":55.5,"z":0.75,"r":103.3,"s":1.07},{"d":"2024-03","y":2024,"m":3,"v":71.2,"z":-1.22,"r":107.6,"s":-0.24},{"d":"2024-04","y":2024,"m":4,"v":173.0,"z":0.22,"r":107.5,"s":-0.3},{"d":"2024-05","y":2024,"m":5,"v":99.1,"z":-1.91,"r":107.3,"s":-1.48},{"d":"2024-06","y":2024,"m":6,"v":64.0,"z":-1.2,"r":108.4,"s":-1.33},{"d":"2024-07","y":2024,"m":7,"v":144.3,"z":2.38,"r":105.9,"s":-0.35},{"d":"2024-08","y":2024,"m":8,"v":120.8,"z":0.04,"r":104.7,"s":0.64},{"d":"2024-09","y":2024,"m":9,"v":119.7,"z":0.24,"r":101.4,"s":1.2},{"d":"2024-10","y":2024,"m":10,"v":150.7,"z":0.23,"r":104.9,"s":0.25},{"d":"2024-11","y":2024,"m":11,"v":166.9,"z":1.44,"r":103.8,"s":1.07},{"d":"2024-12","y":2024,"m":12,"v":56.3,"z":-0.44,"r":109.6,"s":0.63},{"d":"2025-01","y":2025,"m":1,"v":35.1,"z":-0.21,"r":111.8,"s":0.59},{"d":"2025-02","y":2025,"m":2,"v":15.6,"z":-1.36,"r":106.6,"s":-0.93},{"d":"2025-03","y":2025,"m":3,"v":113.4,"z":0.29,"r":107.8,"s":-0.53},{"d":"2025-04","y":2025,"m":4,"v":159.7,"z":-0.23,"r":106.1,"s":-0.54},{"d":"2025-05","y":2025,"m":5,"v":168.6,"z":0.98,"r":109.3,"s":0.51},{"d":"2025-06","y":2025,"m":6,"v":90.1,"z":-0.0,"r":100.6,"s":0.34},{"d":"2025-07","y":2025,"m":7,"v":82.6,"z":-0.25,"r":104.4,"s":0.38},{"d":"2025-08","y":2025,"m":8,"v":134.9,"z":0.65,"r":null,"s":0.19},{"d":"2025-09","y":2025,"m":9,"v":98.6,"z":-0.96,"r":null,"s":-0.16},{"d":"2025-10","y":2025,"m":10,"v":190.1,"z":1.63,"r":null,"s":0.97},{"d":"2025-11","y":2025,"m":11,"v":61.9,"z":-1.65,"r":null,"s":-0.49},{"d":"2025-12","y":2025,"m":12,"v":102.1,"z":1.26,"r":null,"s":0.34}],"annual":[{"y":1990,"v":1233.6},{"y":1991,"v":1296.2},{"y":1992,"v":1127.6},{"y":1993,"v":1093.5},{"y":1994,"v":1262.4},{"y":1995,"v":1214.1},{"y":1996,"v":1302.4},{"y":1997,"v":1314.4},{"y":1998,"v":1178.3},{"y":1999,"v":1244.0},{"y":2000,"v":1148.5},{"y":2001,"v":1345.8},{"y":2002,"v":1187.7},{"y":2003,"v":1225.4},{"y":2004,"v":1123.1},{"y":2005,"v":1075.6},{"y":2006,"v":1279.7},{"y":2007,"v":1257.2},{"y":2008,"v":1093.2},{"y":2009,"v":999.7},{"y":2010,"v":1290.1},{"y":2011,"v":1346.8},{"y":2012,"v":1427.7},{"y":2013,"v":1226.1},{"y":2014,"v":1230.5},{"y":2015,"v":1299.8},{"y":2016,"v":1130.7},{"y":2017,"v":1228.6},{"y":2018,"v":1390.1},{"y":2019,"v":1463.9},{"y":2020,"v":1508.5},{"y":2021,"v":1120.8},{"y":2022,"v":1246.1},{"y":2023,"v":1241.8},{"y":2024,"v":1270.5},{"y":2025,"v":1252.8}],"trend":{"slope":2.6137075449346834,"intercept":-4005.9862207004408,"p":0.13976888407422913,"r2":0.06300477845350529},"clim":[{"m":1,"mean":38.2,"std":15.0,"min":9.6,"max":70.2,"q1":25.2,"q3":46.2},{"m":2,"mean":41.4,"std":18.9,"min":14.8,"max":102.2,"q1":29.9,"q3":45.8},{"m":3,"mean":105.3,"std":27.9,"min":65.7,"max":171.1,"q1":85.8,"q3":125.5},{"m":4,"mean":166.5,"std":30.1,"min":104.3,"max":246.3,"q1":146.3,"q3":175.0},{"m":5,"mean":145.0,"std":24.0,"min":99.1,"max":200.2,"q1":130.0,"q3":160.0},{"m":6,"mean":90.2,"std":21.8,"min":54.2,"max":131.8,"q1":75.0,"q3":105.1},{"m":7,"mean":88.5,"std":23.5,"min":44.3,"max":144.3,"q1":69.3,"q3":105.1},{"m":8,"mean":120.0,"std":22.8,"min":68.6,"max":156.9,"q1":100.5,"q3":136.1},{"m":9,"mean":115.6,"std":17.7,"min":64.2,"max":150.0,"q1":103.5,"q3":126.2},{"m":10,"mean":144.4,"std":28.1,"min":91.5,"max":219.6,"q1":125.4,"q3":159.1},{"m":11,"mean":117.9,"std":34.0,"min":61.9,"max":185.1,"q1":94.8,"q3":138.0},{"m":12,"mean":68.2,"std":26.9,"min":23.7,"max":136.2,"q1":51.4,"q3":83.3}],"seasons":[{"y":1990,"mam":430.9,"son":340.1},{"y":1991,"mam":475.1,"son":357.3},{"y":1992,"mam":331.5,"son":363.2},{"y":1993,"mam":402.4,"son":297.3},{"y":1994,"mam":422.6,"son":385.0},{"y":1995,"mam":426.2,"son":378.2},{"y":1996,"mam":425.1,"son":377.1},{"y":1997,"mam":441.2,"son":413.7},{"y":1998,"mam":388.0,"son":346.0},{"y":1999,"mam":429.2,"son":374.6},{"y":2000,"mam":366.8,"son":366.4},{"y":2001,"mam":463.5,"son":437.2},{"y":2002,"mam":416.8,"son":357.5},{"y":2003,"mam":422.1,"son":324.1},{"y":2004,"mam":364.4,"son":342.6},{"y":2005,"mam":417.0,"son":295.5},{"y":2006,"mam":474.7,"son":409.4},{"y":2007,"mam":379.2,"son":331.7},{"y":2008,"mam":343.2,"son":316.7},{"y":2009,"mam":350.0,"son":296.0},{"y":2010,"mam":436.3,"son":359.0},{"y":2011,"mam":383.4,"son":488.2},{"y":2012,"mam":471.2,"son":444.4},{"y":2013,"mam":409.4,"son":391.2},{"y":2014,"mam":386.8,"son":392.6},{"y":2015,"mam":419.2,"son":474.3},{"y":2016,"mam":463.9,"son":343.0},{"y":2017,"mam":387.8,"son":374.2},{"y":2018,"mam":586.0,"son":315.6},{"y":2019,"mam":387.0,"son":500.4},{"y":2020,"mam":485.3,"son":492.6},{"y":2021,"mam":401.5,"son":335.3},{"y":2022,"mam":386.4,"son":365.2},{"y":2023,"mam":442.6,"son":428.4},{"y":2024,"mam":343.4,"son":437.4},{"y":2025,"mam":441.7,"son":350.6}],"decades":[{"d":1990,"mean":1226.6,"std":74.5,"n":10,"cv":0.418},{"d":2000,"mean":1173.6,"std":105.5,"n":10,"cv":0.427},{"d":2010,"mean":1303.4,"std":104.1,"n":10,"cv":0.47},{"d":2020,"mean":1273.4,"std":127.1,"n":6,"cv":0.439}],"enso":[{"y":1990,"v":340.1,"ph":"Neutral"},{"y":1991,"v":357.3,"ph":"El Ni\u00f1o"},{"y":1992,"v":363.2,"ph":"Neutral"},{"y":1993,"v":297.3,"ph":"Neutral"},{"y":1994,"v":385.0,"ph":"El Ni\u00f1o"},{"y":1995,"v":378.2,"ph":"La Ni\u00f1a"},{"y":1996,"v":377.1,"ph":"Neutral"},{"y":1997,"v":413.7,"ph":"El Ni\u00f1o"},{"y":1998,"v":346.0,"ph":"La Ni\u00f1a"},{"y":1999,"v":374.6,"ph":"La Ni\u00f1a"},{"y":2000,"v":366.4,"ph":"La Ni\u00f1a"},{"y":2001,"v":437.2,"ph":"Neutral"},{"y":2002,"v":357.5,"ph":"El Ni\u00f1o"},{"y":2003,"v":324.1,"ph":"Neutral"},{"y":2004,"v":342.6,"ph":"El Ni\u00f1o"},{"y":2005,"v":295.5,"ph":"La Ni\u00f1a"},{"y":2006,"v":409.4,"ph":"El Ni\u00f1o"},{"y":2007,"v":331.7,"ph":"La Ni\u00f1a"},{"y":2008,"v":316.7,"ph":"La Ni\u00f1a"},{"y":2009,"v":296.0,"ph":"El Ni\u00f1o"},{"y":2010,"v":359.0,"ph":"La Ni\u00f1a"},{"y":2011,"v":488.2,"ph":"La Ni\u00f1a"},{"y":2012,"v":444.4,"ph":"Neutral"},{"y":2013,"v":391.2,"ph":"Neutral"},{"y":2014,"v":392.6,"ph":"El Ni\u00f1o"},{"y":2015,"v":474.3,"ph":"El Ni\u00f1o"},{"y":2016,"v":343.0,"ph":"La Ni\u00f1a"},{"y":2017,"v":374.2,"ph":"La Ni\u00f1a"},{"y":2018,"v":315.6,"ph":"El Ni\u00f1o"},{"y":2019,"v":500.4,"ph":"Neutral"},{"y":2020,"v":492.6,"ph":"La Ni\u00f1a"},{"y":2021,"v":335.3,"ph":"La Ni\u00f1a"},{"y":2022,"v":365.2,"ph":"La Ni\u00f1a"},{"y":2023,"v":428.4,"ph":"El Ni\u00f1o"},{"y":2024,"v":437.4,"ph":"La Ni\u00f1a"},{"y":2025,"v":350.6,"ph":"Neutral"}],"episodes":[{"start":"2009-04","end":"2009-11","len":8,"min":-2.47},{"start":"2004-05","end":"2004-08","len":4,"min":-1.92},{"start":"1992-02","end":"1992-05","len":4,"min":-1.88},{"start":"1993-09","end":"1993-12","len":4,"min":-1.88},{"start":"2005-11","end":"2006-02","len":4,"min":-1.85},{"start":"2002-07","end":"2002-10","len":4,"min":-1.49}]};</script><script>
+(function(){
+const D = window.__DATA__;
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const fmt0 = d3.format(',.0f'), fmt1 = d3.format(',.1f'), sgn0 = d3.format('+,.0f'), sgn2 = d3.format('+.2f');
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const parse = s => { const [y,m] = s.split('-').map(Number); return new Date(y, m-1, 1); };
+const mean = d3.mean(D.annual, d => d.v);
+
+/* tooltip */
+const tip = document.getElementById('tip');
+function showTip(html, ev){
+  tip.innerHTML = html; tip.style.opacity = 1;
+  const r = tip.getBoundingClientRect(), pad = 14;
+  let x = ev.clientX + pad, y = ev.clientY + pad;
+  if (x + r.width > innerWidth - 8) x = ev.clientX - r.width - pad;
+  if (y + r.height > innerHeight - 8) y = ev.clientY - r.height - pad;
+  tip.style.left = Math.max(8, x) + 'px'; tip.style.top = Math.max(8, y) + 'px';
+}
+function hideTip(){ tip.style.opacity = 0; }
+const row = (k, v, c) => `<div class="row"><span>${c ? `<i class="dot" style="background:${c}"></i>` : ''}${k}</span><b>${v}</b></div>`;
+
+function frame(id, h, m){
+  const el = document.getElementById(id); el.innerHTML = '';
+  const W = Math.max(280, el.clientWidth);
+  const w = W - m.l - m.r, hh = h - m.t - m.b;
+  const svg = d3.select(el).append('svg').attr('width', W).attr('height', h).attr('viewBox', `0 0 ${W} ${h}`);
+  const g = svg.append('g').attr('transform', `translate(${m.l},${m.t})`);
+  return {el, svg, g, w, h: hh, W};
+}
+function yGrid(g, y, w, ticks, f){
+  g.append('g').attr('class','tick-grid').call(d3.axisLeft(y).ticks(ticks).tickSize(-w).tickFormat(f || fmt0))
+   .call(a => a.selectAll('.tick text').attr('x', -8))
+   .call(a => a.selectAll('.tick line').attr('stroke', css('--grid')));
+}
+function xAxis(g, x, h, opts={}){
+  const ax = (opts.axis || d3.axisBottom(x)).tickSizeOuter(0);
+  g.append('g').attr('transform', `translate(0,${h})`).call(ax)
+   .call(a => a.selectAll('.tick line').attr('stroke', css('--rule')).attr('y2', 4))
+   .call(a => a.selectAll('.tick text').attr('dy', '1.1em'));
+}
+
+/* 01 monthly */
+function monthly(){
+  const isS = innerWidth < 600;
+  const f = frame('c-monthly', isS ? 260 : 340, {t:24, r:16, b:28, l:40});
+  const data = D.monthly.map(d => ({...d, date: parse(d.d)}));
+  const x = d3.scaleTime().domain(d3.extent(data, d => d.date)).range([0, f.w]);
+  const y = d3.scaleLinear().domain([0, 260]).range([f.h, 0]);
+  yGrid(f.g, y, f.w, 5);
+  // drought band
+  const b0 = x(new Date(2008,3,1)), b1 = x(new Date(2009,11,1));
+  f.g.append('rect').attr('x', b0).attr('width', b1-b0).attr('y', 0).attr('height', f.h).attr('fill', css('--dry')).attr('opacity', .1);
+  f.g.append('text').attr('class','ann').attr('x', b1 + 6).attr('y', 12).text('2008–09 drought');
+  f.g.append('path').datum(data).attr('fill', css('--wet')).attr('opacity', .14)
+    .attr('d', d3.area().x(d => x(d.date)).y0(f.h).y1(d => y(d.v)).curve(d3.curveMonotoneX));
+  f.g.append('path').datum(data).attr('fill','none').attr('stroke', css('--wet')).attr('stroke-width', 1).attr('opacity', .55)
+    .attr('d', d3.line().x(d => x(d.date)).y(d => y(d.v)).curve(d3.curveMonotoneX));
+  const rl = data.filter(d => d.r != null);
+  f.g.append('path').datum(rl).attr('fill','none').attr('stroke', css('--ink')).attr('stroke-width', 2.25).attr('stroke-linecap','round')
+    .attr('d', d3.line().x(d => x(d.date)).y(d => y(d.r)).curve(d3.curveMonotoneX));
+  xAxis(f.g, x, f.h, {axis: d3.axisBottom(x).ticks(d3.timeYear.every(isS ? 10 : 5)).tickFormat(d3.timeFormat('%Y'))});
+  // hover
+  const cross = f.g.append('line').attr('y1',0).attr('y2',f.h).attr('stroke', css('--ink-2')).attr('stroke-width',1).attr('opacity',0);
+  const dot = f.g.append('circle').attr('r',4.5).attr('fill', css('--wet')).attr('stroke', css('--panel')).attr('stroke-width',2).attr('opacity',0);
+  const dot2 = f.g.append('circle').attr('r',4.5).attr('fill', css('--ink')).attr('stroke', css('--panel')).attr('stroke-width',2).attr('opacity',0);
+  const bis = d3.bisector(d => d.date).center;
+  f.g.append('rect').attr('width', f.w).attr('height', f.h).attr('fill','transparent')
+    .on('pointermove', ev => {
+      const [mx] = d3.pointer(ev); const d = data[bis(data, x.invert(mx))];
+      cross.attr('x1', x(d.date)).attr('x2', x(d.date)).attr('opacity', .5);
+      dot.attr('cx', x(d.date)).attr('cy', y(d.v)).attr('opacity', 1);
+      if (d.r != null) dot2.attr('cx', x(d.date)).attr('cy', y(d.r)).attr('opacity', 1); else dot2.attr('opacity', 0);
+      const z = d.z, zl = z <= -1 ? 'Dry month' : z >= 1 ? 'Wet month' : 'Near normal';
+      showTip(`<div class="t">${MONL[d.m-1]} ${d.y}</div>${row('Rainfall', fmt1(d.v)+' mm', css('--wet'))}${d.r!=null?row('12-mo avg', fmt1(d.r)+' mm', css('--bg')):''}${row(zl, sgn2(z)+'σ')}`, ev);
+    })
+    .on('pointerleave', () => { hideTip(); cross.attr('opacity',0); dot.attr('opacity',0); dot2.attr('opacity',0); });
+}
+
+/* 02 annual */
+function annual(){
+  const isS = innerWidth < 600;
+  const f = frame('c-annual', isS ? 280 : 340, {t:28, r:16, b:28, l:44});
+  const data = D.annual.map(d => ({...d, a: d.v - mean}));
+  const x = d3.scaleBand().domain(data.map(d => d.y)).range([0, f.w]).paddingInner(isS ? .15 : .22).paddingOuter(.1);
+  const y = d3.scaleLinear().domain([-300, 300]).range([f.h, 0]);
+  yGrid(f.g, y, f.w, 6, d => d === 0 ? 'avg' : sgn0(d));
+  f.g.append('line').attr('x1',0).attr('x2',f.w).attr('y1',y(0)).attr('y2',y(0)).attr('stroke', css('--ink-2')).attr('stroke-width',1);
+  const r = Math.min(4, x.bandwidth()/2);
+  f.g.selectAll('path.bar').data(data).join('path').attr('class','bar')
+    .attr('fill', d => d.a >= 0 ? css('--wet') : css('--dry'))
+    .attr('d', d => {
+      const x0 = x(d.y), bw = x.bandwidth(), yb = y(0), yt = y(d.a), h = Math.abs(yt - yb), rr = Math.min(r, h);
+      if (d.a >= 0) return `M${x0},${yb}V${yt+rr}Q${x0},${yt} ${x0+rr},${yt}H${x0+bw-rr}Q${x0+bw},${yt} ${x0+bw},${yt+rr}V${yb}Z`;
+      return `M${x0},${yb}V${yt-rr}Q${x0},${yt} ${x0+rr},${yt}H${x0+bw-rr}Q${x0+bw},${yt} ${x0+bw},${yt-rr}V${yb}Z`;
+    });
+  // trend
+  const t = D.trend, ty = yr => t.slope*yr + t.intercept - mean;
+  const y0 = data[0].y, y1 = data[data.length-1].y;
+  f.g.append('line').attr('x1', x(y0)+x.bandwidth()/2).attr('x2', x(y1)+x.bandwidth()/2).attr('y1', y(ty(y0))).attr('y2', y(ty(y1)))
+    .attr('stroke', css('--ink')).attr('stroke-width', 2).attr('stroke-dasharray','5 4');
+  // annotations
+  const ann = (yr, txt, above) => { const d = data.find(e => e.y === yr); const cx = x(yr)+x.bandwidth()/2;
+    f.g.append('text').attr('class','ann-strong').attr('x', cx).attr('y', y(d.a) + (above ? -8 : 16)).attr('text-anchor', yr > 2015 ? 'end' : 'middle').text(txt); };
+  ann(2009, '2009 · 1,000 mm', false); ann(2020, '2020 · 1,509 mm', true);
+  xAxis(f.g, x, f.h, {axis: d3.axisBottom(x).tickValues(data.map(d=>d.y).filter(v => v % (isS ? 10 : 5) === 0))});
+  f.g.selectAll('rect.hit').data(data).join('rect').attr('class','hit').attr('x', d => x(d.y) - x.step()*x.paddingInner()/2).attr('width', x.step()).attr('y',0).attr('height',f.h).attr('fill','transparent')
+    .on('pointermove', (ev,d) => { f.g.selectAll('path.bar').attr('opacity', e => e === d ? 1 : .45);
+      showTip(`<div class="t">${d.y}</div>${row('Total', fmt0(d.v)+' mm', d.a>=0?css('--wet'):css('--dry'))}${row('vs. average', sgn0(d.a)+' mm')}`, ev); })
+    .on('pointerleave', () => { hideTip(); f.g.selectAll('path.bar').attr('opacity',1); });
+}
+
+/* 03 climatology */
+function clim(){
+  const isS = innerWidth < 600;
+  const f = frame('c-clim', isS ? 280 : 320, {t:30, r:12, b:28, l:40});
+  const x = d3.scaleBand().domain(D.clim.map(d => d.m)).range([0, f.w]).padding(.3);
+  const y = d3.scaleLinear().domain([0, 260]).range([f.h, 0]);
+  // season bands
+  [[3,5,'Long rains'],[9,11,'Short rains']].forEach(([a,b,l]) => {
+    const x0 = x(a) - x.step()*x.padding()/2, x1 = x(b) + x.bandwidth() + x.step()*x.padding()/2;
+    f.g.append('rect').attr('x', x0).attr('width', x1-x0).attr('y', -22).attr('height', f.h+22).attr('fill', css('--band')).attr('rx', 6);
+    f.g.append('text').attr('class','ann').attr('x', (x0+x1)/2).attr('y', -8).attr('text-anchor','middle').text(l);
+  });
+  yGrid(f.g, y, f.w, 5);
+  const bw = x.bandwidth(), cx = d => x(d.m) + bw/2;
+  f.g.selectAll('line.rng').data(D.clim).join('line').attr('x1', cx).attr('x2', cx).attr('y1', d => y(d.min)).attr('y2', d => y(d.max))
+    .attr('stroke', css('--muted')).attr('stroke-width', 2).attr('stroke-linecap','round').attr('opacity', .55);
+  f.g.selectAll('rect.iqr').data(D.clim).join('rect').attr('class','iqr').attr('x', d => cx(d) - Math.min(14, bw/2)).attr('width', Math.min(28, bw))
+    .attr('y', d => y(d.q3)).attr('height', d => y(d.q1) - y(d.q3)).attr('rx', 4).attr('fill', css('--wet')).attr('opacity', .85);
+  f.g.selectAll('line.mean').data(D.clim).join('line').attr('x1', d => cx(d) - Math.min(18, bw/2+4)).attr('x2', d => cx(d) + Math.min(18, bw/2+4))
+    .attr('y1', d => y(d.mean)).attr('y2', d => y(d.mean)).attr('stroke', css('--ink')).attr('stroke-width', 2.5).attr('stroke-linecap','round');
+  if (!isS) f.g.selectAll('text.mv').data(D.clim.filter(d => [4,10].includes(d.m))).join('text').attr('class','ann-strong')
+    .attr('x', d => cx(d) + Math.min(18, bw/2+4) + 6).attr('y', d => y(d.mean) + 4).text(d => fmt0(d.mean) + ' mm');
+  xAxis(f.g, x, f.h, {axis: d3.axisBottom(x).tickFormat(m => isS ? MON[m-1][0] : MON[m-1])});
+  f.g.selectAll('rect.hit').data(D.clim).join('rect').attr('class','hit').attr('x', d => x(d.m) - x.step()*x.padding()/2).attr('width', x.step()).attr('y',-22).attr('height', f.h+22).attr('fill','transparent')
+    .on('pointermove', (ev,d) => showTip(`<div class="t">${MONL[d.m-1]}</div>${row('Average', fmt0(d.mean)+' mm')}${row('Typical', fmt0(d.q1)+'–'+fmt0(d.q3)+' mm', css('--wet'))}${row('Record', fmt0(d.min)+'–'+fmt0(d.max)+' mm')}${row('Std. dev.', fmt0(d.std)+' mm')}`, ev))
+    .on('pointerleave', hideTip);
+}
+
+/* 04 seasons */
+function seasons(){
+  const isS = innerWidth < 600;
+  const f = frame('c-seasons', isS ? 280 : 340, {t:16, r: isS ? 16 : 92, b:28, l:40});
+  const data = D.seasons;
+  const x = d3.scaleLinear().domain([1990, 2025]).range([0, f.w]);
+  const y = d3.scaleLinear().domain([200, 600]).range([f.h, 0]);
+  yGrid(f.g, y, f.w, 5);
+  const reg = k => { const xs = data.map(d=>d.y), ys = data.map(d=>d[k]); const mx = d3.mean(xs), my = d3.mean(ys);
+    const b = d3.sum(xs.map((v,i)=>(v-mx)*(ys[i]-my))) / d3.sum(xs.map(v=>(v-mx)**2)); return yr => my + b*(yr-mx); };
+  const ser = [{k:'mam', c:css('--mam'), l:'Long rains'}, {k:'son', c:css('--son'), l:'Short rains'}];
+  ser.forEach(s => {
+    const r = reg(s.k);
+    f.g.append('line').attr('x1', x(1990)).attr('x2', x(2025)).attr('y1', y(r(1990))).attr('y2', y(r(2025))).attr('stroke', s.c).attr('stroke-width', 1.5).attr('stroke-dasharray','5 4').attr('opacity',.9);
+    f.g.append('path').datum(data).attr('fill','none').attr('stroke', s.c).attr('stroke-width', 2).attr('stroke-linejoin','round')
+      .attr('d', d3.line().x(d => x(d.y)).y(d => y(d[s.k])).curve(d3.curveMonotoneX));
+    s.r = r;
+  });
+  if (!isS) {
+    const endY = ser.map(s => ({s, v: y(data[data.length-1][s.k])}));
+    // keep labels apart
+    endY.sort((a,b)=>a.v-b.v); if (endY[1].v - endY[0].v < 16) endY[1].v = endY[0].v + 16;
+    endY.forEach(({s,v}) => f.g.append('text').attr('class','lab').attr('x', f.w + 8).attr('y', v + 4).attr('fill', css('--ink')).text(s.l));
+  }
+  xAxis(f.g, x, f.h, {axis: d3.axisBottom(x).ticks(isS ? 4 : 8).tickFormat(d3.format('d'))});
+  const cross = f.g.append('line').attr('y1',0).attr('y2',f.h).attr('stroke', css('--ink-2')).attr('opacity',0);
+  const dots = ser.map(s => f.g.append('circle').attr('r',4.5).attr('fill', s.c).attr('stroke', css('--panel')).attr('stroke-width',2).attr('opacity',0));
+  f.g.append('rect').attr('width', f.w).attr('height', f.h).attr('fill','transparent')
+    .on('pointermove', ev => { const [mx] = d3.pointer(ev); const yr = Math.round(x.invert(mx)); const d = data.find(e => e.y === yr); if (!d) return;
+      cross.attr('x1', x(yr)).attr('x2', x(yr)).attr('opacity', .5);
+      ser.forEach((s,i) => dots[i].attr('cx', x(yr)).attr('cy', y(d[s.k])).attr('opacity',1));
+      showTip(`<div class="t">${yr}</div>${row('Long rains', fmt0(d.mam)+' mm', ser[0].c)}${row('Short rains', fmt0(d.son)+' mm', ser[1].c)}`, ev); })
+    .on('pointerleave', () => { hideTip(); cross.attr('opacity',0); dots.forEach(d => d.attr('opacity',0)); });
+}
+
+/* diverging color */
+function divScale(){
+  const interp = d3.interpolateRgbBasis([css('--dry-deep'), css('--dry'), css('--neutral'), css('--wet'), css('--wet-deep')]);
+  // in dark mode the "deep" tokens are lighter; keep extremes at the strong hue instead
+  const dark = d3.hsl(css('--bg')).l < .3;
+  const i2 = dark ? d3.interpolateRgbBasis([css('--dry'), d3.interpolateRgb(css('--dry'), css('--neutral'))(.35), css('--neutral'), d3.interpolateRgb(css('--wet'), css('--neutral'))(.35), css('--wet')]) : interp;
+  return z => i2((Math.max(-2.2, Math.min(2.2, z)) + 2.2) / 4.4);
+}
+
+/* 05 heatmap */
+function heat(){
+  const col = divScale();
+  const el = document.getElementById('c-heat');
+  const f = frame('c-heat', 360, {t:8, r:8, b:30, l:36});
+  const years = d3.range(1990, 2026);
+  const x = d3.scaleBand().domain(years).range([0, f.w]).paddingInner(.08);
+  const y = d3.scaleBand().domain(d3.range(1,13)).range([0, f.h]).paddingInner(.1);
+  const cells = f.g.selectAll('rect.c').data(D.monthly).join('rect').attr('class','c')
+    .attr('x', d => x(d.y)).attr('y', d => y(d.m)).attr('width', x.bandwidth()).attr('height', y.bandwidth()).attr('rx', 2.5)
+    .attr('fill', d => col(d.z));
+  // outline 2009 Apr–Nov
+  const sx = x(2009), ey = y(4);
+  f.g.append('rect').attr('x', sx - 2).attr('y', ey - 2).attr('width', x.bandwidth() + 4).attr('height', y(11) + y.bandwidth() - ey + 4).attr('rx', 4)
+    .attr('fill','none').attr('stroke', css('--ink')).attr('stroke-width', 1.5);
+  f.g.append('g').call(d3.axisLeft(y).tickFormat(m => MON[m-1]).tickSize(0)).call(a => a.selectAll('text').attr('x', -6));
+  f.g.append('g').attr('transform', `translate(0,${f.h})`).call(d3.axisBottom(x).tickValues(years.filter(v => v % 5 === 0)).tickSize(0)).call(a => a.selectAll('text').attr('dy','1.3em'));
+  cells.on('pointermove', (ev,d) => { d3.select(ev.currentTarget).attr('stroke', css('--ink')).attr('stroke-width', 1.5);
+      const lbl = d.z <= -1.5 ? 'Severe deficit' : d.z <= -1 ? 'Moderate deficit' : d.z >= 1.5 ? 'Very wet' : d.z >= 1 ? 'Wet' : 'Near normal';
+      showTip(`<div class="t">${MONL[d.m-1]} ${d.y}</div>${row('Rainfall', fmt1(d.v)+' mm')}${row('Anomaly', sgn2(d.z)+'σ', col(d.z))}${row(lbl,'')}`, ev); })
+    .on('pointerleave', ev => { d3.select(ev.currentTarget).attr('stroke', null); hideTip(); });
+  // legend
+  const lg = document.getElementById('hm-legend');
+  const stops = [-2,-1.5,-1,0,1,1.5,2];
+  lg.innerHTML = `<span style="gap:10px">Drier <span style="display:inline-flex;gap:2px">${stops.map(s => `<i class="sw" style="background:${col(s)};width:18px;border-radius:2px" title="${s}σ"></i>`).join('')}</span> Wetter</span>`;
+}
+
+/* 06 SPI */
+function spi(){
+  const isS = innerWidth < 600;
+  const f = frame('c-spi', isS ? 240 : 300, {t:20, r:16, b:28, l:36});
+  const data = D.monthly.filter(d => d.s != null).map(d => ({...d, date: parse(d.d)}));
+  const x = d3.scaleBand().domain(data.map(d => d.d)).range([0, f.w]).paddingInner(.25);
+  const xt = d3.scaleTime().domain([new Date(1990,0,1), new Date(2025,11,1)]).range([0, f.w]);
+  const y = d3.scaleLinear().domain([-3, 3]).range([f.h, 0]);
+  yGrid(f.g, y, f.w, 6, d3.format('+d'));
+  f.g.selectAll('rect.b').data(data).join('rect').attr('class','b').attr('x', d => x(d.d)).attr('width', Math.max(1, x.bandwidth()))
+    .attr('y', d => y(Math.max(0, d.s))).attr('height', d => Math.abs(y(d.s) - y(0)))
+    .attr('fill', d => d.s >= 0 ? css('--wet') : css('--dry')).attr('opacity', d => Math.abs(d.s) >= 1 ? 1 : .45);
+  f.g.append('line').attr('x1',0).attr('x2',f.w).attr('y1',y(0)).attr('y2',y(0)).attr('stroke', css('--ink-2'));
+  f.g.append('line').attr('x1',0).attr('x2',f.w).attr('y1',y(-1)).attr('y2',y(-1)).attr('stroke', css('--dry')).attr('stroke-dasharray','4 4');
+  f.g.append('text').attr('class','ann').attr('x', f.w).attr('text-anchor','end').attr('y', y(-1) - 6).text('Drought threshold −1');
+  const a = x('2009-04'), b = x('2009-11') + x.bandwidth();
+  f.g.append('path').attr('d', `M${a},${y(-2.7)}V${y(-2.85)}H${b}V${y(-2.7)}`).attr('fill','none').attr('stroke', css('--ink'));
+  f.g.append('text').attr('class','ann-strong').attr('x', b + 6).attr('y', y(-2.6)).text('Apr–Nov 2009 · 8 months');
+  xAxis(f.g, xt, f.h, {axis: d3.axisBottom(xt).ticks(d3.timeYear.every(isS ? 10 : 5)).tickFormat(d3.timeFormat('%Y'))});
+  f.g.selectAll('rect.hit').data(data).join('rect').attr('class','hit').attr('x', d => x(d.d) - x.step()*.125).attr('width', x.step()).attr('y',0).attr('height',f.h).attr('fill','transparent')
+    .on('pointermove', (ev,d) => showTip(`<div class="t">3 months to ${MON[d.m-1]} ${d.y}</div>${row('SPI-3', sgn2(d.s), d.s>=0?css('--wet'):css('--dry'))}${d.s<=-1?row('Drought','yes'):''}`, ev))
+    .on('pointerleave', hideTip);
+}
+
+/* episodes table */
+function episodes(){
+  const tb = document.querySelector('#t-episodes tbody');
+  const lab = s => { const [y,m] = s.split('-').map(Number); return MON[m-1] + ' ' + y; };
+  // episodes end on the last month of the 3-month window; show the window start too
+  tb.innerHTML = D.episodes.slice(0,5).map((e,i) => `<tr class="${i===0?'hi':''}"><td>${lab(e.start)} – ${lab(e.end)}</td><td class="r num">${e.len} months</td><td class="r num">${e.min.toFixed(2)}</td><td><span class="sev" style="width:${Math.round((-e.min)/2.5*100)}px"></span></td></tr>`).join('');
+}
+
+/* 07 decades */
+function decades(){
+  const f = frame('c-dec', 260, {t:24, r:12, b:28, l:44});
+  const data = D.decades;
+  const x = d3.scaleBand().domain(data.map(d => d.d)).range([0, f.w]).padding(.38);
+  const y = d3.scaleLinear().domain([0, 1500]).range([f.h, 0]);
+  yGrid(f.g, y, f.w, 5);
+  const bw = x.bandwidth();
+  f.g.selectAll('path.bar').data(data).join('path').attr('class','bar')
+    .attr('fill', d => d.d === 2000 ? css('--dry') : d.d === 2010 ? css('--wet') : css('--muted'))
+    .attr('d', d => { const x0 = x(d.d), yt = y(d.mean), yb = y(0), r = 4; return `M${x0},${yb}V${yt+r}Q${x0},${yt} ${x0+r},${yt}H${x0+bw-r}Q${x0+bw},${yt} ${x0+bw},${yt+r}V${yb}Z`; });
+  f.g.selectAll('line.err').data(data).join('line').attr('x1', d => x(d.d)+bw/2).attr('x2', d => x(d.d)+bw/2).attr('y1', d => y(d.mean-d.std)).attr('y2', d => y(d.mean+d.std)).attr('stroke', css('--ink-2')).attr('stroke-width',1.5);
+  f.g.selectAll('text.v').data(data).join('text').attr('class','ann-strong').attr('text-anchor','middle').attr('x', d => x(d.d)+bw/2).attr('y', d => y(d.mean+d.std) - 7).text(d => fmt0(d.mean));
+  xAxis(f.g, x, f.h, {axis: d3.axisBottom(x).tickFormat(d => d + 's' + (d === 2020 ? '*' : ''))});
+  f.g.selectAll('rect.hit').data(data).join('rect').attr('x', d => x(d.d) - 10).attr('width', bw + 20).attr('y',0).attr('height',f.h).attr('fill','transparent')
+    .on('pointermove', (ev,d) => showTip(`<div class="t">${d.d}s · ${d.n} years</div>${row('Avg annual', fmt0(d.mean)+' mm')}${row('Std. dev.', fmt0(d.std)+' mm')}`, ev)).on('pointerleave', hideTip);
+
+  const g2 = frame('c-cv', 260, {t:24, r:16, b:28, l:44});
+  const x2 = d3.scalePoint().domain(data.map(d => d.d)).range([0, g2.w]).padding(.5);
+  const y2 = d3.scaleLinear().domain([.40, .48]).range([g2.h, 0]);
+  yGrid(g2.g, y2, g2.w, 4, d3.format('.0%'));
+  g2.g.append('path').datum(data).attr('fill','none').attr('stroke', css('--accent')).attr('stroke-width', 2)
+    .attr('d', d3.line().x(d => x2(d.d)).y(d => y2(d.cv)));
+  g2.g.selectAll('circle').data(data).join('circle').attr('cx', d => x2(d.d)).attr('cy', d => y2(d.cv)).attr('r', 6)
+    .attr('fill', css('--accent')).attr('stroke', css('--panel')).attr('stroke-width', 2);
+  g2.g.selectAll('text.v').data(data).join('text').attr('class','ann-strong').attr('text-anchor','middle').attr('x', d => x2(d.d)).attr('y', (d,i) => y2(d.cv) + (i===1 ? 22 : -14)).text(d => (d.cv*100).toFixed(1) + '%');
+  xAxis(g2.g, x2, g2.h, {axis: d3.axisBottom(x2).tickFormat(d => d + 's' + (d === 2020 ? '*' : ''))});
+  g2.g.append('text').attr('class','ann').attr('x', g2.w).attr('y', g2.h - 8).attr('text-anchor','end').text('Axis starts at 40%');
+}
+
+/* 08 ENSO */
+function enso(){
+  const isS = innerWidth < 600;
+  const f = frame('c-enso', 240, {t:10, r:16, b:32, l: isS ? 70 : 90});
+  const phases = ['El Niño','Neutral','La Niña'];
+  const y = d3.scaleBand().domain(phases).range([0, f.h]).padding(.25);
+  const x = d3.scaleLinear().domain([260, 500]).range([0, f.w]);
+  f.g.append('g').call(d3.axisBottom(x).ticks(6).tickSize(f.h).tickFormat(d => d + ' mm'))
+    .call(a => a.selectAll('.tick line').attr('stroke', css('--grid'))).call(a => a.selectAll('.tick text').attr('dy','1.2em'));
+  f.g.append('g').call(d3.axisLeft(y).tickSize(0)).call(a => a.selectAll('text').attr('x', -10).attr('class','lab').attr('fill', css('--ink')));
+  // beeswarm-ish jitter: stack collisions
+  const byP = d3.group(D.enso, d => d.ph);
+  const pts = [];
+  phases.forEach(p => { const arr = (byP.get(p)||[]).slice().sort((a,b)=>a.v-b.v); const placed = [];
+    arr.forEach(d => { const cx = x(d.v); let k = 0, off = 0; const step = 9;
+      while (placed.some(q => Math.abs(q.cx - cx) < 9 && Math.abs(q.off - off) < 9)) { k++; off = (k % 2 ? 1 : -1) * Math.ceil(k/2) * step; }
+      placed.push({cx, off}); pts.push({...d, cx, cy: y(p) + y.bandwidth()/2 + off}); }); });
+  const c = {'El Niño': css('--dry'), 'Neutral': css('--muted'), 'La Niña': css('--wet')};
+  phases.forEach(p => { const m = d3.mean(byP.get(p), d => d.v);
+    f.g.append('line').attr('x1', x(m)).attr('x2', x(m)).attr('y1', y(p)).attr('y2', y(p)+y.bandwidth()).attr('stroke', css('--ink')).attr('stroke-width', 2.5).attr('stroke-linecap','round');
+    f.g.append('text').attr('class','ann-strong').attr('x', x(m) + 6).attr('y', y(p) + 4).text(fmt0(m) + ' mm avg'); });
+  f.g.selectAll('circle').data(pts).join('circle').attr('cx', d => d.cx).attr('cy', d => d.cy).attr('r', 4.5)
+    .attr('fill', d => c[d.ph]).attr('opacity', .85).attr('stroke', css('--panel')).attr('stroke-width', 1.5)
+    .on('pointermove', (ev,d) => showTip(`<div class="t">${d.y} · ${d.ph}</div>${row('Short rains', fmt0(d.v)+' mm', c[d.ph])}`, ev)).on('pointerleave', hideTip);
+}
+
+function annualTable(){
+  const tb = document.querySelector('#t-annual tbody');
+  const ph = Object.fromEntries(D.enso.map(d => [d.y, d.ph]));
+  const s = Object.fromEntries(D.seasons.map(d => [d.y, d]));
+  tb.innerHTML = D.annual.map(d => `<tr><td class="num">${d.y}</td><td class="r num">${fmt0(d.v)}</td><td class="r num">${sgn0(d.v-mean)}</td><td class="r num">${fmt0(s[d.y].mam)}</td><td class="r num">${fmt0(s[d.y].son)}</td><td>${ph[d.y]}</td></tr>`).join('');
+}
+
+function drawAll(){ monthly(); annual(); clim(); seasons(); heat(); spi(); decades(); enso(); }
+episodes(); annualTable(); drawAll();
+let raf; const redraw = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(drawAll); };
+let lastW = innerWidth; addEventListener('resize', () => { if (innerWidth !== lastW) { lastW = innerWidth; redraw(); } });
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redraw);
+new MutationObserver(redraw).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(redraw);
+})();
+</script>
+
+</body></html>
