@@ -35,32 +35,60 @@ An analysis of 36 years of monthly rainfall over Uganda using CHIRPS satellite p
 ```
 .
 ├── data/
-│   ├── raw/                     # CHIRPS monthly rainfall exported from Google Earth Engine
-│   │   ├── uganda_monthly_rainfall.csv                # national average, 1990–2025
-│   │   └── uganda_rainfall_by_region_1990_2025.csv    # 6 regions + national reference
+│   ├── raw/                                        # exported from Google Earth Engine
+│   │   ├── uganda_monthly_rainfall.csv             # national average, 1990–2025
+│   │   └── uganda_rainfall_by_region_1990_2025.csv # 6 regions + national reference
 │   └── processed/
-│       ├── uganda_rainfall_regional_summary.csv    # per-region stats (written by notebook 02)
-│       ├── uganda_rainfall_regional_droughts.csv   # top 3 droughts per region (written by notebook 02)
-│       ├── regional_report_summary.csv             # full per-region metrics behind the regional report
-│       └── regional_report_droughts.csv            # top 5 droughts per region, as in the report
+│       ├── regional_summary.csv                    # every metric per region (pipeline)
+│       ├── regional_droughts.csv                   # top 5 SPI-3 droughts per region (pipeline)
+│       ├── regional_results.json                   # full results + monthly series behind the regional report
+│       ├── uganda_rainfall_regional_summary.csv    # headline stats per region (notebook 02)
+│       └── uganda_rainfall_regional_droughts.csv   # top 3 droughts per region (notebook 02)
 ├── notebooks/
 │   ├── 01_national_analysis.ipynb   # Part 1: national trends, droughts, seasons, ENSO
-│   └── 02_regional_analysis.ipynb   # Part 2: the same pipeline, per region
+│   └── 02_regional_analysis.ipynb   # Part 2: the same analysis, per region
 ├── reports/
-│   ├── national_report.html     # standalone write-up of Part 1
-│   └── regional_report.html     # standalone write-up of Part 2
+│   ├── national_report.html         # standalone write-up of Part 1
+│   └── regional_report.html         # standalone write-up of Part 2
+├── scripts/
+│   ├── gee/
+│   │   ├── uganda_national_rainfall_gee.js   # Earth Engine export → data/raw/uganda_monthly_rainfall.csv
+│   │   └── uganda_regional_rainfall_gee.js   # Earth Engine export → data/raw/uganda_rainfall_by_region_1990_2025.csv
+│   └── regional_pipeline.py         # regional analysis as a script → data/processed/regional_*
+├── LICENSE
 └── requirements.txt
 ```
 
+## Workflow
+
+1. **Export:** run the scripts in `scripts/gee/` in the [Earth Engine Code Editor](https://code.earthengine.google.com/) and start the export from the Tasks tab. Each one writes a CSV to Google Drive, which goes in `data/raw/`.
+2. **Analyse:** the notebooks in `notebooks/` contain the full analysis with a written finding after each step. `scripts/regional_pipeline.py` runs the regional analysis non-interactively and writes the tables and JSON in `data/processed/`.
+3. **Report:** the HTML pages in `reports/` present the results.
+
 ## Data
 
-- **Source:** [CHIRPS Daily Precipitation](https://www.chc.ucsb.edu/data/chirps) (Climate Hazards Center, UC Santa Barbara), summed to monthly totals and averaged over each boundary in Google Earth Engine.
 - **Period:** January 1990 to December 2025, with 432 months per series and no gaps.
-- **Regions:**
-  - **Karamoja:** FAO GAUL 2015 districts.
-  - **Lake Victoria basin:** HydroBASINS level-6 sub-basins, clipped to Uganda.
-  - **Central, Eastern, Northern, Western:** geoBoundaries level 1.
-- **Masking:** permanent open water (JRC occurrence ≥ 50%) is masked in the regional dataset because CHIRPS is weak over lakes. As a result, the national figures differ slightly between Part 1 and Part 2.
+- **Processing:** daily CHIRPS rainfall is summed to monthly totals, then averaged over each boundary at CHIRPS's native ~5.5 km resolution.
+- **Masking:** permanent open water (JRC occurrence ≥ 50%) is masked in the regional dataset because CHIRPS is weak over lakes. As a result, the national figures differ slightly between Part 1 and Part 2. Set `MASK_WATER = true` in the national script to match.
+
+### Data sources
+
+The CSVs in this repo are derived rainfall statistics. No boundary files or raw imagery are redistributed. All datasets were accessed through the Google Earth Engine data catalog.
+
+| Dataset | Used for | Provider | Terms |
+|---|---|---|---|
+| [CHIRPS Daily v2.0](https://developers.google.com/earth-engine/datasets/catalog/UCSB-CHG_CHIRPS_DAILY) | Rainfall | Climate Hazards Center, UC Santa Barbara | Public domain (CC0) |
+| [FAO GAUL 2015](https://developers.google.com/earth-engine/datasets/catalog/FAO_GAUL_2015_level1) | Uganda boundary, Karamoja districts | UN FAO | Non-commercial use |
+| [geoBoundaries ADM1](https://www.geoboundaries.org/) | Central, Eastern, Northern, Western regions | William & Mary geoLab | Open license, attribution required |
+| [HydroSHEDS / HydroBASINS](https://www.hydrosheds.org/) | Lake Victoria basin | WWF | Free use with attribution |
+| [JRC Global Surface Water](https://global-surface-water.appspot.com/) | Open-water mask | European Commission JRC | Free use with attribution |
+
+**Citations**
+
+- Funk, C. et al. (2015). The climate hazards infrared precipitation with stations — a new environmental record for monitoring extremes. *Scientific Data* 2, 150066.
+- Runfola, D. et al. (2020). geoBoundaries: A global database of political administrative boundaries. *PLoS ONE* 15(4), e0231866.
+- Lehner, B. & Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. *Hydrological Processes* 27(15), 2171–2186.
+- Pekel, J.-F. et al. (2016). High-resolution mapping of global surface water and its long-term changes. *Nature* 540, 418–422.
 
 ## Methods
 
@@ -87,10 +115,20 @@ pip install -r requirements.txt
 jupyter notebook notebooks/
 ```
 
-Run the notebooks from inside `notebooks/`, because the data paths are relative to that folder. The HTML reports in `reports/` open directly in a browser.
+Run the notebooks from inside `notebooks/`, because the data paths are relative to that folder. The pipeline script can be run from anywhere:
+
+```bash
+python scripts/regional_pipeline.py
+```
+
+The HTML reports in `reports/` open directly in a browser.
 
 ## Limitations
 
 - CHIRPS is a satellite–gauge blend. It is less reliable over open water and complex terrain, and it is not a substitute for station records.
 - The four administrative regions stand in for agro-ecological zones.
 - The ENSO classification is year-based and coarse. Testing the Indian Ocean Dipole (IOD) index is the obvious next step.
+
+## License
+
+The code and analysis in this repository are released under the [MIT License](LICENSE). The source datasets keep their own terms (see [Data sources](#data-sources)).
