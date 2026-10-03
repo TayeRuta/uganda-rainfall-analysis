@@ -7,7 +7,9 @@ An analysis of 36 years of monthly rainfall over Uganda using CHIRPS satellite p
   <img alt="Annual rainfall 1990–2025 with linear trends: Eastern region +7.2 mm/yr (p = 0.008), Karamoja +6.7 mm/yr (p = 0.008), Uganda national +2.3 mm/yr (not significant)" src="figures/regional_trends_light.png">
 </picture>
 
-**Read the reports:** [National report (1990–2025)](https://tayeruta.github.io/uganda-rainfall-analysis/reports/national_report.html) · [Regional report](https://tayeruta.github.io/uganda-rainfall-analysis/reports/regional_report.html)
+**Start here: [Synthesis report](https://tayeruta.github.io/uganda-rainfall-analysis/reports/synthesis_report.html)**, which combines all three parts and draws out what they mean for agriculture.
+
+Individual reports: [Part 1 · National](https://tayeruta.github.io/uganda-rainfall-analysis/reports/national_report.html) · [Part 2 · Regional](https://tayeruta.github.io/uganda-rainfall-analysis/reports/regional_report.html) · [Part 3 · Indian Ocean Dipole](https://tayeruta.github.io/uganda-rainfall-analysis/reports/iod_report.html)
 
 ## Key findings
 
@@ -43,7 +45,16 @@ An analysis of 36 years of monthly rainfall over Uganda using CHIRPS satellite p
 - **ENSO acts mainly through the IOD.** With the IOD held fixed, ENSO's correlation with the short rains falls to near zero everywhere.
 - **The earlier ENSO null result was partly a window artefact.** September–November leaves out December, when much of the extra rain in strong events falls. 1997 was +36% nationally in Oct–Dec but only +4% in Sep–Nov.
 - **Positive-IOD seasons averaged 18% wetter nationally** (+9% to +25% by region), but the signal leans on strong events: without 1997 and 2019 the correlations fall by about 40%.
+- **The IOD also shapes the June–August rains**, the main growing period in the north and northeast. With El Niño held fixed, it correlates with mid-year rain in every region (partial r = 0.33–0.49), and this signal is robust to removing extreme years.
 - **The IOD does not explain Karamoja's wetting trend**, which stays significant after controlling for it. Neither index has any link to the long rains (Mar–May).
+
+**Synthesis (all parts)**
+
+- **Bad seasons are mostly nationwide.** Regional seasonal totals correlate at 0.71–0.75 on average, so regions rarely offset each other.
+- **The two rainy seasons are independent.** A poor March–May season says little about October–December.
+- **The short rains are the riskier season but the forecastable one.** They vary by 20% a year nationally (13% for the long rains), and the July–August IOD, known by early September, cuts cross-validated forecast error by about 20% in Central and the Lake Victoria basin. Nothing here forecasts the long rains.
+- **Karamoja's and the Eastern region's wetting falls mainly in September–October.**
+- **Failed seasons were most frequent in the 2000s**, not recently, though month-to-month rainfall has become more erratic.
 
 ## Repository structure
 
@@ -62,22 +73,26 @@ An analysis of 36 years of monthly rainfall over Uganda using CHIRPS satellite p
 │       ├── regional_results.json                   # full results + monthly series behind the regional report
 │       ├── uganda_rainfall_regional_summary.csv    # headline stats per region (notebook 02)
 │       ├── uganda_rainfall_regional_droughts.csv   # top 3 droughts per region (notebook 02)
-│       └── iod_*.csv                               # correlation and trend tables (notebook 03)
+│       ├── iod_*.csv                               # correlation and trend tables (notebook 03)
+│       └── *_data.json                             # data behind the Part 3 and synthesis reports
 ├── notebooks/
 │   ├── 01_national_analysis.ipynb   # Part 1: national trends, droughts, seasons, ENSO
 │   ├── 02_regional_analysis.ipynb   # Part 2: the same analysis, per region
 │   └── 03_iod_analysis.ipynb        # Part 3: Indian Ocean Dipole vs ENSO and the short rains
 ├── figures/                         # README figure (light and dark versions)
 ├── reports/
+│   ├── synthesis_report.html        # all three parts combined, with agricultural implications
 │   ├── national_report.html         # standalone write-up of Part 1
-│   └── regional_report.html         # standalone write-up of Part 2
+│   ├── regional_report.html         # standalone write-up of Part 2
+│   └── iod_report.html              # standalone write-up of Part 3
 ├── scripts/
 │   ├── gee/
 │   │   ├── uganda_national_rainfall_gee.js   # Earth Engine export → data/raw/uganda_monthly_rainfall.csv
 │   │   └── uganda_regional_rainfall_gee.js   # Earth Engine export → data/raw/uganda_rainfall_by_region_1990_2025.csv
 │   ├── fetch_climate_indices.py     # downloads the NOAA indices → data/external/
 │   ├── regional_pipeline.py         # regional analysis as a script → data/processed/regional_*
-│   └── make_readme_figure.py        # builds the figures/ chart from regional_results.json
+│   ├── make_readme_figure.py        # builds the figures/ chart from regional_results.json
+│   └── build_report_data.py         # computes every number in the Part 3 and synthesis reports
 ├── LICENSE
 └── requirements.txt
 ```
@@ -87,7 +102,7 @@ An analysis of 36 years of monthly rainfall over Uganda using CHIRPS satellite p
 1. **Export:** run the scripts in `scripts/gee/` in the [Earth Engine Code Editor](https://code.earthengine.google.com/) and start the export from the Tasks tab. Each one writes a CSV to Google Drive, which goes in `data/raw/`.
 2. **Climate indices:** `python scripts/fetch_climate_indices.py` downloads the latest IOD and ENSO indices from NOAA into `data/external/`.
 3. **Analyse:** the notebooks in `notebooks/` contain the full analysis with a written finding after each step. `scripts/regional_pipeline.py` runs the regional analysis non-interactively and writes the tables and JSON in `data/processed/`.
-4. **Report:** the HTML pages in `reports/` present the results.
+4. **Report:** the HTML pages in `reports/` present the results. `python scripts/build_report_data.py` recomputes and refreshes the numbers in the Part 3 and synthesis reports.
 
 ## Data
 
@@ -133,8 +148,10 @@ The rainfall CSVs in this repo are derived statistics. No boundary files or raw 
 - **Teleconnections:**
   - Parts 1–2: comparison of El Niño, La Niña and neutral years.
   - Part 3: correlation of seasonal rainfall with the IOD (DMI) and ENSO (ONI) indices, partial correlations to separate the two, composites by IOD phase, and trend regressions that control for the IOD.
+- **Forecast skill (synthesis):** leave-one-out cross-validated regression of October–December rainfall on the July–August and September IOD, scored by error reduction against climatology and tercile hit rate.
+- **Regional coherence and season links (synthesis):** correlations between regions' seasonal totals, and between consecutive seasons.
 - **Persistence:** autocorrelation of monthly anomalies.
-- **Multiple testing:** about 35 tests were run in Part 2 and 63 in Part 3, so results near p ≈ 0.04 are treated as suggestive. Key results are checked against a Bonferroni threshold (Part 2) and the Benjamini–Hochberg false discovery rate (Part 3).
+- **Multiple testing:** about 35 tests were run in Part 2 and 91 in Part 3, so results near p ≈ 0.04 are treated as suggestive. Key results are checked against a Bonferroni threshold (Part 2) and the Benjamini–Hochberg false discovery rate (Part 3).
 
 ## Reproducing the analysis
 

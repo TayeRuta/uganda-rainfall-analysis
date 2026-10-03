@@ -1,0 +1,749 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Uganda Rainfall Synthesis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single 1080px report column — masthead, KPI strip, then numbered findings, each = headline + chart panel + takeaway */
+:root{
+  --bg:#f3f5f1; --panel:#ffffff; --ink:#132019; --ink-2:#4b5a51; --muted:#7a877f; --rule:#dfe4dd; --grid:#eceee9;
+  --accent:#16825a; --wet:#2b6c9e; --wet-deep:#1b4a70; --dry:#c4572e; --dry-deep:#8d3416; --neutral:#ecebe6;
+  --mam:#16825a; --son:#8a63d2; --band:#eef3ec; --chip:#e8eee6;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Public Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1411; --panel:#161d19; --ink:#eaf0eb; --ink-2:#b2beb6; --muted:#859189; --rule:#27302b; --grid:#1f2723;
+  --accent:#3fae82; --wet:#4a8cc4; --wet-deep:#8cc0ec; --dry:#d9693f; --dry-deep:#f0a283; --neutral:#2a302c;
+  --mam:#2e9e74; --son:#9277e6; --band:#1a241f; --chip:#1d2622; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1411; --panel:#161d19; --ink:#eaf0eb; --ink-2:#b2beb6; --muted:#859189; --rule:#27302b; --grid:#1f2723;
+  --accent:#3fae82; --wet:#4a8cc4; --wet-deep:#8cc0ec; --dry:#d9693f; --dry-deep:#f0a283; --neutral:#2a302c;
+  --mam:#2e9e74; --son:#9277e6; --band:#1a241f; --chip:#1d2622; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;padding-inline:20px;padding-block:0 64px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.015em}
+p{margin:0}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+
+/* masthead */
+.mast{padding-block:48px 28px;display:grid;gap:18px;border-bottom:1px solid var(--rule)}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);display:flex;gap:14px;flex-wrap:wrap}
+.eyebrow span+span{color:var(--muted)}
+.mast h1{font-size:clamp(36px,6.2vw,68px);line-height:1.02;font-weight:800;max-width:15ch}
+.mast h1 em{font-style:normal;color:var(--accent)}
+.dek{font-size:clamp(17px,2vw,20px);color:var(--ink-2);max-width:62ch;line-height:1.5}
+
+/* KPI strip */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-block:28px 8px;border-top:2px solid var(--ink)}
+.kpi{padding:18px 18px 4px 0;display:grid;gap:6px;align-content:start}
+.kpi+.kpi{padding-left:18px;border-left:1px solid var(--rule)}
+.kpi .v{font-family:var(--f-display);font-weight:700;font-size:clamp(30px,3.6vw,42px);line-height:1;font-variant-numeric:tabular-nums}
+.kpi .v small{font-size:.45em;font-weight:500;color:var(--ink-2);margin-left:3px}
+.kpi .l{font-size:14px;color:var(--ink-2);line-height:1.4}
+.tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:99px;background:var(--chip);color:var(--ink-2);max-width:100%;white-space:normal;line-height:1.3}
+.tag i{width:7px;height:7px;border-radius:50%;background:var(--muted);display:inline-block}
+.tag.dry i{background:var(--dry)} .tag.wet i{background:var(--wet)}
+
+/* summary */
+.summary{margin-block:36px 12px;display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px}
+.summary h2{font-size:14px;font-family:var(--f-mono);font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding-top:4px}
+.summary ol{margin:0;padding:0;list-style:none;display:grid;gap:14px;counter-reset:k}
+.summary li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;font-size:17px;line-height:1.5}
+.summary li::before{counter-increment:k;content:counter(k);font-family:var(--f-mono);font-size:13px;color:var(--accent);padding-top:3px}
+.summary b{font-weight:600}
+nav.toc{display:flex;flex-wrap:wrap;gap:8px;margin-block:28px 8px}
+nav.toc a{font-size:13px;color:var(--ink-2);text-decoration:none;padding:6px 12px;border:1px solid var(--rule);border-radius:99px;background:var(--panel)}
+nav.toc a:hover,nav.toc a:focus-visible{border-color:var(--accent);color:var(--ink);outline:none}
+
+/* sections */
+section.f{padding-block:56px 8px;display:grid;gap:18px;scroll-margin-top:16px}
+.f-head{display:grid;gap:10px;max-width:760px}
+.f-num{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.f-head h2{font-size:clamp(24px,3.2vw,34px);line-height:1.15;font-weight:700}
+.f-head p{color:var(--ink-2);font-size:16.5px;max-width:66ch}
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:14px;padding:20px 20px 14px;min-width:0}
+.panel-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px 24px;flex-wrap:wrap;margin-bottom:6px}
+.panel-title{font-weight:600;font-size:15px}
+.panel-sub{font-size:13px;color:var(--muted)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+.sw.line{height:3px;border-radius:2px;width:18px}
+.sw.dash{height:0;border-top:2px dashed var(--ink-2);width:18px;border-radius:0}
+.chart{width:100%;position:relative}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.note{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;font-size:15px;color:var(--ink-2);max-width:760px;padding:14px 16px;border-radius:10px;background:var(--band)}
+.note b{color:var(--ink);font-weight:600}
+.note .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);padding-top:3px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+
+/* svg text */
+svg{display:block;overflow:visible}
+svg text{font-family:var(--f-body);fill:var(--muted);font-size:11.5px}
+svg .tick text{font-family:var(--f-mono);font-size:11px}
+svg .tick line{stroke:var(--grid)}
+svg .domain{display:none}
+svg .ann,svg .ann-strong{paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round}
+svg .ann{fill:var(--ink-2);font-size:12px;font-weight:500}
+svg .ann-strong{fill:var(--ink);font-size:12.5px;font-weight:600}
+svg .lab{font-weight:600;font-size:12.5px}
+
+/* table */
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--rule)}
+th{font-weight:500;color:var(--muted);font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+td.r,th.r{text-align:right}
+tr.hi td{font-weight:600}
+.sev{display:inline-block;height:8px;border-radius:4px;background:var(--dry);vertical-align:middle}
+
+/* limits */
+.limits{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.limits h3{font-size:18px;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.limits ul{margin:0;padding-left:18px;display:grid;gap:8px;color:var(--ink-2);font-size:15px}
+.next{border-left:3px solid var(--accent);padding:4px 0 4px 18px;max-width:760px;font-size:17px}
+.next b{font-family:var(--f-display)}
+
+details{margin-top:8px}
+summary{cursor:pointer;font-weight:600;font-size:15px;padding:10px 0}
+summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--rule);font-size:13px;color:var(--muted);display:grid;gap:8px;max-width:820px}
+
+/* tooltip */
+#tip{position:fixed;pointer-events:none;z-index:20;background:var(--ink);color:var(--bg);padding:9px 12px;border-radius:8px;font-size:13px;line-height:1.45;min-width:120px;box-shadow:0 6px 24px rgba(0,0,0,.18);opacity:0;transition:opacity .12s}
+#tip .t{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.7;margin-bottom:2px}
+#tip .row{display:flex;justify-content:space-between;gap:16px}
+#tip .row b{font-family:var(--f-mono);font-weight:500}
+#tip .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+
+@media (max-width:820px){
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi:nth-child(3){padding-left:0;border-left:0}
+  .kpi:nth-child(n+3){border-top:1px solid var(--rule);margin-top:6px}
+  .summary{grid-template-columns:1fr;gap:12px}
+  .grid2,.limits{grid-template-columns:1fr}
+}
+@media (max-width:480px){ body{padding-inline:16px} .panel{padding:16px 12px 10px} }
+@media (prefers-reduced-motion:reduce){#tip{transition:none}}
+/* regional additions */
+.score{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
+.score th{white-space:nowrap}
+.score td{padding:12px 8px;vertical-align:middle}
+.score th{padding-inline:8px}
+.score td.reg{font-weight:600;white-space:nowrap}
+.score td.reg small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.score tr.ref td{background:var(--band)}
+.bar-cell{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.score td .num{white-space:nowrap}
+.bar-cell i{display:block;height:10px;border-radius:0 4px 4px 0;background:var(--wet);opacity:.85}
+.bar-cell i.var{background:var(--accent)}
+.pill{display:inline-flex;align-items:center;gap:5px;font-family:var(--f-mono);font-size:11px;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.pill.sig{background:var(--accent);color:var(--panel)}
+.pill.ns{background:var(--chip);color:var(--ink-2)}
+.pill.border{background:transparent;color:var(--ink-2);border:1px dashed var(--muted)}
+.mini{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.mini .panel{padding:14px 14px 8px}
+.mini .ph{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.mini .ph b{font-size:14px}
+.callout{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.callout .panel{display:grid;gap:6px;align-content:start}
+.callout .big{font-family:var(--f-display);font-weight:700;font-size:28px;line-height:1.1}
+.callout p{font-size:14.5px;color:var(--ink-2)}
+@media (max-width:820px){.callout{grid-template-columns:1fr}}
+.mapnote{font-size:13px;color:var(--muted)}
+</style>
+<style>@media (max-width:480px){.note{grid-template-columns:1fr;gap:4px}}</style>
+<div id="tip" role="status" aria-live="polite"></div>
+<style>
+/* synthesis additions */
+:root{--jja:#d08a1c;--rest:#cfd5ce}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--jja:#c08218;--rest:#3a443e}}
+:root[data-theme="dark"]{--jja:#c08218;--rest:#3a443e}
+.conf{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:99px;white-space:nowrap}
+.conf.high{background:var(--accent);color:var(--panel)}
+.conf.med{background:transparent;color:var(--ink);border:1.5px solid var(--accent)}
+.conf.low{background:var(--chip);color:var(--ink-2)}
+.summary li .conf{margin-left:6px;vertical-align:2px}
+.kpi .conf{justify-self:start}
+.tabs{display:inline-flex;gap:4px;padding:3px;border:1px solid var(--rule);border-radius:99px;background:var(--bg)}
+.tabs button{font:inherit;font-size:13px;border:0;background:transparent;color:var(--ink-2);padding:5px 12px;border-radius:99px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.zones{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.zone{display:grid;gap:10px;align-content:start}
+.zone h3{font-size:20px}
+.zone .sub{font-size:13px;color:var(--muted);font-family:var(--f-mono);letter-spacing:.04em}
+.zone ul{margin:0;padding-left:18px;display:grid;gap:7px;font-size:15px;color:var(--ink-2)}
+.zone ul b{color:var(--ink);font-weight:600}
+.waffle{display:flex;flex-wrap:wrap;gap:6px}
+.waffle .yr{display:grid;place-items:center;width:58px;height:46px;border-radius:8px;font-family:var(--f-mono);font-size:12px;line-height:1.15;text-align:center}
+.waffle .yr small{display:block;font-size:10px;opacity:.85}
+.wf-up{background:var(--wet);color:#fff}
+.wf-mid{background:var(--chip);color:var(--ink)}
+.wf-low{background:var(--dry);color:#fff}
+.conf-table td{vertical-align:top}
+.conf-table td:first-child{font-weight:600;min-width:220px}
+.conf-table td.ev{color:var(--ink-2);font-size:13.5px}
+.refs{margin:0;padding-left:18px;display:grid;gap:6px;font-size:14px;color:var(--ink-2)}
+.method{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.method .panel{display:grid;gap:8px;align-content:start}
+.method h3{font-size:16px}
+.method p{font-size:14.5px;color:var(--ink-2)}
+@media (max-width:820px){.zones,.method{grid-template-columns:1fr}}
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <div class="eyebrow"><span>Synthesis · Parts 1–3</span><span>Uganda rainfall and agriculture</span><span>Jan 1990 – Dec 2025</span></div>
+  <h1>What 36 years of rain mean for <em>Uganda's farms</em></h1>
+  <p class="dek">A combined reading of the national, regional and ocean-driver analyses. Uganda's total rainfall is not trending, but the northeast is getting wetter, the second rainy season is both the riskiest and the most predictable, and a reading of the Indian Ocean in early September gives two to three months' warning of how the October–December rains will turn out across the south, centre and east.</p>
+</header>
+
+<div class="kpis">
+  <div class="kpi"><div class="v num" id="k-mean">1,203<small>mm</small></div><div class="l">Average national rainfall a year, with no significant trend since 1990</div><span class="conf high">High confidence</span></div>
+  <div class="kpi"><div class="v num" id="k-kar">+6.7<small>mm/yr</small></div><div class="l">Karamoja's rainfall trend, about +230 mm over the record, concentrated in September–October</div><span class="conf med">Medium confidence</span></div>
+  <div class="kpi"><div class="v num" id="k-cv">20<small>%</small></div><div class="l">Year-to-year swing in national October–December rain, against 13% for March–May</div><span class="conf high">High confidence</span></div>
+  <div class="kpi"><div class="v num" id="k-pos">6 of 7</div><div class="l">Seasons with a strong positive IOD in July–August that went on to bring above-median Oct–Dec rain nationally</div><span class="conf med">Medium confidence</span></div>
+</div>
+
+<div class="summary">
+  <h2>Main findings</h2>
+  <ol>
+    <li><span><b>National totals are stable; the change is regional.</b> Uganda's annual rainfall shows no significant trend, but Karamoja (+6.7 mm/yr) and the Eastern region (+7.2 mm/yr) are getting wetter, mostly in September–October. <span class="conf med">Medium</span></span></li>
+    <li><span><b>Bad years are mostly nationwide.</b> Regional seasonal totals move together (average correlation 0.72–0.75), so a poor season in one region usually means a poor season in most. The northeast and the west are the least connected. <span class="conf high">High</span></span></li>
+    <li><span><b>The two seasons are independent.</b> A failed March–May season says almost nothing about October–December. Each season's risk has to be managed on its own. <span class="conf high">High</span></span></li>
+    <li><span><b>The Indian Ocean Dipole (IOD) drives the short rains.</b> It explains much of the year-to-year swing in October–December rainfall, and El Niño's effect runs largely through it. It also influences the June–August rains in the north and east. <span class="conf high">High</span> for Oct–Dec, <span class="conf med">Medium</span> for Jun–Aug</span></li>
+    <li><span><b>There is a usable early warning for the second season, but not the first.</b> The July–August IOD, known by early September, forecasts October–December rain with modest, cross-validated skill in the centre, south and east. Nothing in this analysis forecasts the March–May rains. <span class="conf med">Medium</span></span></li>
+    <li><span><b>Failed seasons are not becoming more frequent.</b> The 2000s had the most failed seasons, centred on the 2008–09 drought. The 2010s and 2020s have had fewer, though rainfall became more erratic month to month. <span class="conf med">Medium</span></span></li>
+  </ol>
+</div>
+
+<nav class="toc" aria-label="Sections">
+  <a href="#regimes">Rain regimes</a><a href="#change">What's changing</a><a href="#coherence">Regions together</a><a href="#seasons">Season links</a><a href="#drivers">Ocean drivers</a><a href="#forecast">Early warning</a><a href="#failures">Failed seasons</a><a href="#agri">For agriculture</a><a href="#confidence">Confidence</a><a href="#methods">Methods</a>
+</nav>
+
+<section class="f" id="regimes">
+  <div class="f-head">
+    <div class="f-num">01 · Rain regimes</div>
+    <h2>Two farming calendars: two seasons in the south, one long season in the north</h2>
+    <p>Share of each region's yearly rainfall falling in each season. The south and west get about a third each from March–May and September–November, which supports two cropping seasons. Karamoja and the Northern region get more than a third of their rain in June–August, in a single long season from April to September.</p>
+  </div>
+  <div class="panel">
+    <div class="panel-top">
+      <div><div class="panel-title">Share of annual rainfall by season, 1990–2025 average</div><div class="panel-sub">Hover a segment for the amount in mm</div></div>
+      <div class="legend"><span><i class="sw" style="background:var(--mam)"></i>Mar–May</span><span><i class="sw" style="background:var(--jja)"></i>Jun–Aug</span><span><i class="sw" style="background:var(--son)"></i>Sep–Nov</span><span><i class="sw" style="background:var(--rest)"></i>Dec–Feb</span></div>
+    </div>
+    <div class="chart" id="c-share"></div>
+  </div>
+  <div class="note"><span class="k">Reliability</span><span>The two seasons are not equally dependable. Nationally, October–December totals swing by <b class="num" id="n-cvond">20%</b> from year to year, against <b class="num" id="n-cvmam">13%</b> for March–May. In Karamoja the short rains swing by <b class="num" id="n-cvkar">39%</b>. For most regions the second season is the riskier one.</span></div>
+</section>
+
+<section class="f" id="change">
+  <div class="f-head">
+    <div class="f-num">02 · What's changing</div>
+    <h2>The wetting is concentrated in September and October</h2>
+    <p>Trend in each calendar month's rainfall, in mm per year, 1990–2025. Outlined cells are significant (p &lt; 0.05). Karamoja's increase falls in September and October, and the Eastern region's in September: around harvest in Karamoja, and around the start of the second season in the east. No month shows a significant decline anywhere.</p>
+  </div>
+  <div class="panel">
+    <div class="panel-top">
+      <div><div class="panel-title">Monthly rainfall trend, mm per year</div><div class="panel-sub">Blue = getting wetter · orange = getting drier · outlined = significant</div></div>
+      <div class="legend" id="trend-legend"></div>
+    </div>
+    <div class="scroll"><div class="chart" id="c-mtrend" style="min-width:700px"></div></div>
+  </div>
+  <div class="panel">
+    <div class="scroll"><table class="score" id="t-trends" style="min-width:760px"><thead><tr>
+      <th>Region</th><th>Annual trend</th><th>Mar–May</th><th>Jun–Aug</th><th>Sep–Nov</th><th>Oct–Dec</th>
+    </tr></thead><tbody></tbody></table></div>
+  </div>
+  <div class="note"><span class="k">Caution</span><span>The northeast's trend comes from one satellite–gauge product (CHIRPS), and the number of rain gauges feeding it has changed over time. It passes two independent statistical tests, but it should be confirmed against station records before it's used for planning.</span></div>
+</section>
+
+<section class="f" id="coherence">
+  <div class="f-head">
+    <div class="f-num">03 · Regions together</div>
+    <h2>When one region has a bad season, most do</h2>
+    <p>Correlation between regions' seasonal totals. Values near 1 mean two regions' good and bad years almost always coincide. The average across all pairs is <span class="num" id="n-coh">0.75</span> for October–December, so poor seasons tend to be national events. The weakest links are between Karamoja and the Western region.</p>
+  </div>
+  <div class="panel">
+    <div class="panel-top">
+      <div><div class="panel-title">Correlation of seasonal rainfall between regions</div><div class="panel-sub" id="coh-sub">Darker = more closely linked</div></div>
+      <div class="tabs" role="group" aria-label="Season"><button type="button" data-k="OND" aria-pressed="true">Oct–Dec</button><button type="button" data-k="MAM" aria-pressed="false">Mar–May</button><button type="button" data-k="annual" aria-pressed="false">Annual</button></div>
+    </div>
+    <div class="scroll"><div class="chart" id="c-coh" style="min-width:560px"></div></div>
+  </div>
+  <div class="note"><span class="k">Implication</span><span>Because regional harvests rise and fall together, buying grain from another region within Uganda offers only a partial buffer in a bad year. The northeast and the southwest are the pairing most likely to differ.</span></div>
+</section>
+
+<section class="f" id="seasons">
+  <div class="f-head">
+    <div class="f-num">04 · Season links</div>
+    <h2>One season says little about the next</h2>
+    <p>Correlation between a region's March–May total and the same year's October–December total, and between October–December and the following March–May. Most values are small (below 0.3): a good or bad first season gives no reliable hint about the second.</p>
+  </div>
+  <div class="panel">
+    <div class="panel-top">
+      <div><div class="panel-title">Correlation between consecutive seasons</div><div class="panel-sub">Filled = significant · hollow = could be chance</div></div>
+      <div class="legend"><span><i class="sw" style="background:var(--mam);border-radius:50%"></i>Mar–May → Oct–Dec, same year</span><span><i class="sw" style="background:var(--son);border-radius:50%"></i>Oct–Dec → next Mar–May</span></div>
+    </div>
+    <div class="chart" id="c-coup"></div>
+  </div>
+  <div class="note"><span class="k">Exceptions</span><span>The Western region's two seasons are modestly linked within the year (r = <span class="num" id="n-wc">0.35</span>). Karamoja shows a link from October–December to the next March–May (r = <span class="num" id="n-karc">0.44</span>). Both are single results that haven't been corrected for multiple testing, so treat them as leads worth testing (Karamoja's with soil-moisture data), not as findings.</span></div>
+</section>
+
+<section class="f" id="drivers">
+  <div class="f-head">
+    <div class="f-num">05 · Ocean drivers</div>
+    <h2>The Indian Ocean matters in two windows; El Niño mostly through it</h2>
+    <p>Correlation between each season's rainfall and two ocean indices: the Indian Ocean Dipole and El Niño (ONI). The IOD's influence is strongest in October–December. The March–May long rains show no link to either index in any region.</p>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-top"><div><div class="panel-title">Indian Ocean Dipole</div><div class="panel-sub">Correlation with seasonal rainfall · outlined = significant</div></div></div>
+      <div class="chart" id="c-drv-dmi"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-top"><div><div class="panel-title">El Niño (ONI)</div><div class="panel-sub">Correlation with seasonal rainfall · outlined = significant</div></div></div>
+      <div class="chart" id="c-drv-oni"></div>
+    </div>
+  </div>
+  <div class="legend" id="drv-legend"></div>
+  <div class="callout" id="drv-cards"></div>
+</section>
+
+<section class="f" id="forecast">
+  <div class="f-head">
+    <div class="f-num">06 · Early warning</div>
+    <h2>An early-September reading of the Indian Ocean gives two to three months' warning</h2>
+    <p>The IOD is monitored weekly, so its July–August average is known by early September, around the time second-season planting begins in the two-season south. Each region's October–December rainfall was predicted from that value, and from the September value, holding each year out in turn so it never helped predict itself (leave-one-out cross-validation). The bars show how much that cut forecast error compared with assuming an average season.</p>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-top"><div><div class="panel-title">Forecast error reduction, Oct–Dec rainfall</div><div class="panel-sub">Cross-validated · 0% = no better than the average</div></div>
+        <div class="legend"><span><i class="sw" style="background:var(--wet)"></i>Jul–Aug IOD (known early Sep)</span><span><i class="sw" style="background:var(--wet-deep)"></i>Sep IOD (known early Oct)</span></div></div>
+      <div class="chart" id="c-skill"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-top"><div><div class="panel-title">What followed a strong July–August IOD, nationally</div><div class="panel-sub">Oct–Dec rainfall, ranked into thirds of the 1990–2025 record</div></div></div>
+      <div style="display:grid;gap:14px;margin-top:10px">
+        <div><div class="panel-sub" style="margin-bottom:6px">Positive IOD in July–August (≥ +0.4 °C)</div><div class="waffle" id="wf-pos"></div></div>
+        <div><div class="panel-sub" style="margin-bottom:6px">Negative IOD in July–August (≤ −0.4 °C)</div><div class="waffle" id="wf-neg"></div></div>
+        <div class="legend"><span><i class="sw" style="background:var(--wet)"></i>Wettest third</span><span><i class="sw" style="background:var(--chip)"></i>Middle third</span><span><i class="sw" style="background:var(--dry)"></i>Driest third</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="note"><span class="k">How good is it?</span><span>Useful, not decisive. In Central and the Lake Victoria basin the July–August IOD cuts forecast error by about a fifth, and picks the right third (wet, normal or dry) in <span class="num" id="n-hit">56–58%</span> of years, against one in three by chance. Waiting for September's value improves that to about a quarter, but arrives after much of the planting. After a strong positive July–August IOD, national October–December rain was above the median in <b id="n-pos">5 of 6</b> seasons. There is little or no skill for Karamoja or the Western region. Operational forecasts from ICPAC and the Uganda National Meteorological Authority use more information than this and should come first; this result shows why the IOD is central to them.</span></div>
+</section>
+
+<section class="f" id="failures">
+  <div class="f-head">
+    <div class="f-num">07 · Failed seasons</div>
+    <h2>The 2000s were the hardest decade, not the most recent</h2>
+    <p>Number of seasons per decade with rainfall in the driest fifth of each region's own record (a common working definition of a failed season). The 2000s, including the 2008–09 drought, stand out. The 2020s cover only six years so far.</p>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-top"><div><div class="panel-title">Failed March–May seasons</div><div class="panel-sub">Count per decade</div></div></div>
+      <div class="chart" id="c-fail-mam"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-top"><div><div class="panel-title">Failed October–December seasons</div><div class="panel-sub">Count per decade</div></div></div>
+      <div class="chart" id="c-fail-ond"></div>
+    </div>
+  </div>
+  <div class="note"><span class="k">But</span><span>Fewer failed seasons doesn't mean less risk. Part 1 found that month-to-month rainfall became about 12% more erratic from the 1990s to the 2010s. Totals that look normal can still hide badly timed dry spells, which this monthly data can't see.</span></div>
+</section>
+
+<section class="f" id="agri">
+  <div class="f-head">
+    <div class="f-num">08 · For agriculture</div>
+    <h2>What this means by farming zone</h2>
+    <p>These are implications of the rainfall evidence, not tested agricultural results. Each one should be checked against crop, yield and price data before it informs a decision. The zones follow the regions used in this analysis.</p>
+  </div>
+  <div class="zones">
+    <div class="panel zone">
+      <span class="sub">CENTRAL · LAKE VICTORIA BASIN · WESTERN</span>
+      <h3>Two-season south and west</h3>
+      <ul>
+        <li><b>March–May is the dependable season</b> (13% swing nationally), but nothing here forecasts it. Drought-tolerant varieties, insurance and water storage are the main tools.</li>
+        <li><b>October–December is riskier but forecastable.</b> A strong positive IOD in July–August points to a wet season: an opportunity for longer-maturing varieties, but also a warning for waterlogging, flooding and wet-harvest losses. A negative IOD points to a dry season.</li>
+        <li>The Western region is the steadiest and least tied to the IOD, so it is the least forecastable from the ocean.</li>
+      </ul>
+    </div>
+    <div class="panel zone">
+      <span class="sub">EASTERN</span>
+      <h3>Getting wetter, and strongly ocean-driven</h3>
+      <ul>
+        <li><b>Rainfall is rising</b> (+7.2 mm/yr), mostly in September.</li>
+        <li>It has the strongest June–August IOD link and a solid October–December one, so <b>both of its main growing periods carry an ocean signal</b>.</li>
+        <li>Positive-IOD years bring the biggest surges (2019's short rains were 94% above average). Flood preparedness should follow the IOD forecast.</li>
+      </ul>
+    </div>
+    <div class="panel zone">
+      <span class="sub">NORTHERN</span>
+      <h3>One long season, hit hardest in 2009</h3>
+      <ul>
+        <li>About 35% of the year's rain falls in June–August. <b>The 2009 drought lasted 9 months here</b>, the longest anywhere since 1990.</li>
+        <li>The IOD links to its June–August rains once El Niño is held fixed, and <b>El Niño itself tends to dry the mid-year season</b>: a developing El Niño without a positive IOD is the risk scenario.</li>
+        <li>No significant long-term trend in any season.</li>
+      </ul>
+    </div>
+    <div class="panel zone">
+      <span class="sub">KARAMOJA</span>
+      <h3>Driest, most erratic, and changing</h3>
+      <ul>
+        <li><b>917 mm a year with a 17.5% annual swing</b>, twice the national figure: the highest-risk farming environment in the country.</li>
+        <li><b>The extra rain arrives in September–October</b>, at the end of the April–September season. That could lengthen the growing window, but rain at harvest also raises drying and storage losses. Both are worth testing against crop data.</li>
+        <li>No usable October–December forecast skill from the IOD. The June–August signal is more promising (partial r = 0.44).</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note"><span class="k">Nationally</span><span>Because regions' bad seasons coincide, food-security planning can't rely on one region offsetting another. Shocks to national production are likely to be correlated, which strengthens the case for strategic reserves, index insurance and early action triggered by seasonal forecasts.</span></div>
+</section>
+
+<section class="f" id="confidence">
+  <div class="f-head">
+    <div class="f-num">09 · Confidence</div>
+    <h2>How much weight each finding can bear</h2>
+    <p>Confidence combines the strength of the statistics, whether independent tests agree, whether the result survives multiple-testing correction, and whether it fits the published climate science. <span class="conf high">High</span> results can inform decisions now. <span class="conf med">Medium</span> results are likely, but need confirming with a second dataset. <span class="conf low">Low</span> results are leads for further work.</p>
+  </div>
+  <div class="panel">
+    <div class="scroll"><table class="score conf-table" id="t-conf" style="min-width:760px"><thead><tr><th>Finding</th><th>Evidence</th><th>Confidence</th></tr></thead><tbody>
+      <tr><td>No trend in national annual rainfall</td><td class="ev">Linear and rank-based tests agree, with and without lakes masked (p = 0.14–0.33)</td><td><span class="conf high">High</span></td></tr>
+      <tr><td>Regions' bad seasons usually coincide</td><td class="ev">Average between-region correlation 0.71–0.75 for annual, Mar–May and Oct–Dec totals</td><td><span class="conf high">High</span></td></tr>
+      <tr><td>Mar–May and Oct–Dec are independent</td><td class="ev">Same-year correlation below 0.3 and not significant in 6 of 7 series; Western r = 0.35</td><td><span class="conf high">High</span></td></tr>
+      <tr><td>The IOD drives Oct–Dec rainfall in the centre, south and east</td><td class="ev">r = 0.50–0.59; survives false-discovery-rate correction; consistent with published research</td><td><span class="conf high">High</span></td></tr>
+      <tr><td>No ocean-index link to the Mar–May long rains</td><td class="ev">All correlations below 0.2 in every region</td><td><span class="conf high">High</span></td></tr>
+      <tr><td>Karamoja and Eastern are getting wetter</td><td class="ev">p = 0.008, confirmed by the Kendall test; single rainfall product; not explained by the IOD</td><td><span class="conf med">Medium</span></td></tr>
+      <tr><td>El Niño affects Oct–Dec rain mainly through the IOD</td><td class="ev">Partial correlations near zero; the two indices overlap heavily (r = 0.70), so few years separate them</td><td><span class="conf med">Medium</span></td></tr>
+      <tr><td>The IOD influences Jun–Aug rainfall</td><td class="ev">Partial r = 0.33–0.49 in every region, robust to extreme years; one region passes the strict correction</td><td><span class="conf med">Medium</span></td></tr>
+      <tr><td>The July–August IOD gives usable Oct–Dec early warning</td><td class="ev">Cross-validated error reduction of 13–22% in Central, Lake Victoria basin, Eastern and national (15–25% with September's value); little or none in Karamoja and Western</td><td><span class="conf med">Medium</span></td></tr>
+      <tr><td>Failed seasons are not becoming more frequent</td><td class="ev">Counts per decade; the 2020s have only six years</td><td><span class="conf med">Medium</span></td></tr>
+      <tr><td>Monthly rainfall has become more erratic</td><td class="ev">Coefficient of variation up about 12% from the 1990s to the 2010s; not formally tested</td><td><span class="conf low">Low</span></td></tr>
+      <tr><td>Karamoja's Oct–Dec rain carries into the next Mar–May</td><td class="ev">Single correlation (r = 0.44), not corrected for multiple testing</td><td><span class="conf low">Low</span></td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<section class="f" id="methods">
+  <div class="f-head">
+    <div class="f-num">10 · Methods, limits and next steps</div>
+    <h2>How this was done, and what it can't tell you</h2>
+  </div>
+  <div class="method">
+    <div class="panel">
+      <h3>Data</h3>
+      <p>CHIRPS daily rainfall (UC Santa Barbara), summed to monthly totals and averaged over six regions and the whole country in Google Earth Engine, with permanent open water masked. IOD: Dipole Mode Index (HadISST1.1, NOAA). ENSO: Oceanic Niño Index (ERSSTv5, NOAA). January 1990 to December 2025.</p>
+    </div>
+    <div class="panel">
+      <h3>Statistics</h3>
+      <p>Linear and Mann–Kendall trend tests; Pearson, Spearman and partial correlations; SPI-3 drought index; leave-one-out cross-validated regression for forecast skill; Benjamini–Hochberg false-discovery-rate correction across the 91 driver tests in Part 3. Significance means p &lt; 0.05 before correction unless stated.</p>
+    </div>
+    <div class="panel">
+      <h3>Main limits</h3>
+      <p>One rainfall product, with a changing gauge network. Monthly totals can't show rainy-season onset, dry spells or intensity, which often matter more to crops than totals. 36 years is short for climate attribution. The four administrative regions stand in for agro-ecological zones.</p>
+    </div>
+  </div>
+  <p class="next"><b>Next: from rainfall to agriculture.</b> Link these rainfall series to crop production and yields (UBOS agricultural surveys, FAOSTAT), vegetation condition (satellite NDVI), and food prices, to measure how much each rainfall signal actually moves harvests and food security. Daily CHIRPS data would add onset dates and dry spells, the rainfall measures most closely tied to crop failure.</p>
+
+  <details class="panel">
+    <summary>References</summary>
+    <ol class="refs">
+      <li>Behera, S. K. et al. (2005). Paramount impact of the Indian Ocean Dipole on the East African short rains: a CGCM study. <i>Journal of Climate</i> 18, 4514–4530.</li>
+      <li>Black, E., Slingo, J. & Sperber, K. R. (2003). An observational study of the relationship between excessively strong short rains in coastal East Africa and Indian Ocean SST. <i>Monthly Weather Review</i> 131, 74–94.</li>
+      <li>Funk, C. et al. (2015). The climate hazards infrared precipitation with stations — a new environmental record for monitoring extremes. <i>Scientific Data</i> 2, 150066.</li>
+      <li>Nicholson, S. E. (2017). Climate and climatic variability of rainfall over eastern Africa. <i>Reviews of Geophysics</i> 55, 590–635.</li>
+      <li>Saji, N. H. et al. (1999). A dipole mode in the tropical Indian Ocean. <i>Nature</i> 401, 360–363.</li>
+    </ol>
+  </details>
+  <details class="panel">
+    <summary>Data table · regional summary</summary>
+    <div class="scroll"><table id="t-all"><thead></thead><tbody></tbody></table></div>
+  </details>
+</section>
+
+<footer>
+  <p><b>Part of a series.</b> <a href="national_report.html" style="color:var(--accent)">Part 1: national analysis</a> · <a href="regional_report.html" style="color:var(--accent)">Part 2: regional analysis</a> · <a href="iod_report.html" style="color:var(--accent)">Part 3: Indian Ocean Dipole</a></p>
+  <p><b>Reproducibility.</b> Every number on this page is computed by <span class="num">scripts/build_report_data.py</span> from the data in the repository, and the analysis code is in <span class="num">notebooks/</span>.</p>
+  <p><b>Note on national figures.</b> This page uses the regional dataset, which masks lakes, so national figures (1,203 mm a year) differ slightly from Part 1 (1,241 mm), which did not.</p>
+</footer>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script id="report-data" type="application/json">{"order":["Karamoja","Eastern","Northern","Central","Western","Lake Victoria basin","Uganda (national)"],"regions":["Karamoja","Eastern","Northern","Central","Western","Lake Victoria basin"],"years":[1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025],"annual":{"Karamoja":[859.3155,1006.87,756.1603,686.9088,854.4996,795.9323,915.0875,903.4514,874.7484,764.4625,828.8022,982.4508,708.0604,841.7889,822.208,755.0024,1033.1092,1152.6413,744.1773,733.8621,949.5346,1044.0143,1169.631,996.504,853.7747,861.0666,813.3719,969.8049,1153.8189,1051.9852,1347.8483,797.7291,818.314,814.0811,1114.2998,1233.4485],"Eastern":[1442.0122,1534.4566,1291.1047,1163.1617,1303.6274,1366.1054,1468.5815,1318.8281,1262.2276,1366.7878,1281.851,1525.5487,1316.9929,1384.8618,1200.1884,1168.195,1615.2674,1516.0773,1318.7118,1219.8743,1509.9866,1508.3682,1614.5442,1425.1108,1473.0717,1595.7433,1245.9808,1492.5936,1516.8783,1832.5437,1965.303,1278.4822,1451.096,1464.722,1581.5484,1493.8936],"Northern":[1221.6202,1284.0365,1083.3754,1014.5806,1216.9781,1124.2695,1190.7429,1181.1043,1130.2242,1139.3333,1059.0298,1262.235,1070.5683,1171.8333,1072.056,1004.8402,1188.1544,1237.1594,966.0916,844.5886,1208.4462,1294.7557,1380.7857,1233.8316,1169.6674,1178.1953,1025.7553,1162.1294,1340.0813,1311.608,1416.4755,981.9882,1019.7304,1095.3857,1220.201,1248.0633],"Central":[1145.4147,1162.2241,1077.5106,1068.2472,1228.4283,1198.7456,1301.1657,1405.1914,1167.7436,1235.5564,1179.747,1318.2346,1216.3263,1210.4713,1105.927,1047.5518,1197.3608,1169.3882,1104.5934,998.6953,1221.3423,1289.2878,1394.4081,1100.8322,1185.775,1232.9485,1149.3703,1194.7425,1322.5802,1486.0982,1463.0518,1133.8857,1301.4258,1215.6641,1155.9587,1137.4037],"Western":[1121.6633,1093.6118,1031.6245,1100.4994,1147.0596,1115.7232,1237.918,1187.577,1079.4502,1105.9275,1106.9203,1298.6821,1085.0246,1106.8907,1090.4503,1071.7288,1145.9529,1116.1168,1026.8946,977.1307,1279.8998,1271.8133,1373.5685,1174.1053,1103.4587,1161.8914,1122.001,1075.0378,1303.3748,1194.1681,1212.9555,1079.2326,1157.591,1092.6247,1115.3401,1121.3022],"Lake Victoria basin":[1032.3946,1064.9113,961.1503,972.8032,1153.8342,1103.4287,1207.6701,1270.8688,1074.0193,1102.4511,1046.4088,1183.5372,1078.0312,1031.772,997.3928,956.0916,1122.1894,1055.528,1003.9287,950.5189,1127.5262,1224.9324,1281.5202,1035.5056,1054.4844,1078.4038,1015.8928,1087.6429,1234.3897,1286.809,1311.9548,1071.1743,1188.9075,1113.2089,1074.903,1069.5712],"Uganda (national)":[1213.4287,1248.9651,1098.7408,1067.3034,1214.1233,1170.52,1262.675,1244.9707,1143.4027,1181.5383,1125.3409,1319.1868,1136.8058,1193.244,1101.1776,1052.6975,1239.5979,1233.5101,1057.3162,959.7148,1271.202,1318.1318,1414.5569,1220.7078,1199.1566,1243.5028,1104.2504,1193.4319,1352.5222,1389.2154,1452.2374,1076.9085,1168.4064,1169.732,1232.9247,1230.0387]},"mam":{"Karamoja":[308.1342,332.2496,224.2189,253.7134,286.5828,243.0992,280.9262,305.2409,225.7887,271.6791,225.2981,311.9368,263.7811,318.5391,257.4988,306.9167,346.4298,309.5649,180.7565,267.9761,371.1011,264.2383,394.749,366.5498,221.0579,282.9715,374.8503,207.0113,590.8664,208.8766,439.7529,314.534,263.8086,309.7435,308.6449,352.7577],"Eastern":[524.5735,583.5562,401.0112,424.3278,469.2537,448.3955,550.7882,438.1512,391.7332,497.433,407.1387,557.061,464.8565,468.8908,361.308,443.1281,608.0658,474.1936,411.9314,436.7455,535.8398,485.7743,504.4363,507.9622,470.8804,457.0179,542.5814,453.2168,707.6392,481.2793,616.4367,482.8384,439.7465,521.3019,456.3129,547.524],"Northern":[366.1864,427.952,281.8275,344.964,346.3074,326.523,350.8073,383.9458,295.9855,349.7176,293.8487,378.5427,317.0257,366.9938,310.4924,347.644,395.3429,318.8551,240.1859,268.1362,370.0077,330.196,392.2058,364.1288,327.1977,347.1144,401.4109,277.7566,564.6559,286.6447,423.2292,333.8738,270.7513,349.6831,274.5625,359.1922],"Central":[446.8946,450.6744,331.8024,422.6063,447.1996,474.3011,428.4837,473.5297,439.9635,450.376,405.8689,491.9667,461.037,437.1269,372.3766,434.5328,482.9873,377.9132,385.4281,369.2202,436.2134,389.68,511.8197,367.0608,400.9669,421.6751,457.831,457.0476,550.1029,412.0659,509.5418,425.4165,444.9847,454.1969,352.2711,444.5661],"Western":[350.6994,345.8571,304.8606,370.2427,368.1365,373.3546,331.35,411.3511,351.8378,321.2624,350.5903,413.9673,381.5867,380.1347,369.4524,369.6618,403.0408,337.3321,305.7664,307.6386,373.491,337.1573,459.7795,375.0396,336.688,365.884,406.5055,309.8723,505.2102,324.6717,363.1221,315.5057,359.6173,391.985,297.5676,367.0223],"Lake Victoria basin":[386.8961,398.2913,302.5911,352.348,416.76,432.754,364.9496,456.812,391.1129,377.9042,348.0343,414.4298,418.2447,377.4987,356.5793,398.6814,427.0205,360.3311,340.6147,337.8309,388.9904,357.4554,471.3336,365.6885,360.1687,388.9689,427.2904,423.9474,497.4756,368.9089,465.6044,393.3408,431.3601,389.9378,339.4123,391.5655],"Uganda (national)":[400.0586,433.8279,313.9192,377.2603,388.3202,383.5251,388.9542,415.4929,350.8242,382.6823,345.2653,434.1206,381.376,398.0366,344.0908,383.1485,443.9236,356.548,308.3565,320.948,406.8612,365.1648,447.5498,387.6548,363.8864,381.4903,433.3148,344.6827,567.2075,347.4264,451.9677,367.7821,349.8224,404.2766,320.7014,403.9289]},"ond":{"Karamoja":[130.3334,179.0681,188.3734,85.8859,124.7501,135.3428,125.4159,248.123,159.7995,134.5977,181.3718,201.3678,160.7608,89.9567,147.9599,70.1318,285.4769,74.6801,147.8631,194.0729,124.5215,240.025,241.3571,171.6443,195.3186,223.9799,105.785,184.1958,119.0248,311.3475,248.2185,105.3017,156.497,175.7146,269.8597,373.1615],"Eastern":[296.1604,297.7499,364.5638,203.7317,302.3991,329.9451,274.9099,464.8862,263.6924,322.084,325.4439,354.2855,422.1446,262.0173,294.512,188.2168,462.9383,226.5864,226.5698,372.4497,321.7076,404.2069,462.1099,315.248,372.4477,583.2334,216.8887,256.7809,284.2872,666.7212,539.3246,224.3133,309.5472,370.1072,431.4885,367.9899],"Northern":[243.8173,228.7119,283.548,181.8796,253.1004,254.8931,224.8187,348.157,241.7328,236.694,224.8758,312.2318,270.8898,213.3368,220.0145,158.3514,311.8083,163.5611,177.996,206.4704,250.8152,320.2988,339.338,272.5196,260.573,352.1555,206.0954,200.8836,231.1922,402.5043,316.5671,174.3445,255.2193,293.8904,284.9516,355.3432],"Central":[313.4335,311.464,355.5851,288.6491,377.0833,331.7342,351.4715,557.7005,257.1785,362.3701,385.6066,368.4818,396.6713,334.3127,317.8971,217.0899,340.9538,262.0987,216.6306,324.6594,357.1982,417.3856,439.8566,316.2242,301.7627,443.8219,300.6013,251.3118,342.6159,592.5112,454.4512,304.9879,363.7325,433.2956,357.1971,321.0665],"Western":[366.0324,331.5176,338.7199,354.8101,378.0855,351.5002,393.6233,435.0909,334.2164,393.2858,387.0492,417.5431,360.1488,313.0037,321.0414,266.9614,358.7771,273.3282,227.0346,322.118,413.454,373.2461,458.6231,369.8205,323.115,401.0701,357.832,301.6865,369.3866,436.1632,422.4443,359.2041,403.8303,407.3096,404.088,369.7044],"Lake Victoria basin":[324.3304,314.845,344.8855,318.291,398.2347,343.2232,371.4548,512.3667,292.1989,362.037,399.42,371.23,355.6243,305.1115,301.5364,216.5866,372.4576,254.8815,237.0088,324.862,358.155,408.4002,429.3577,321.7594,296.3182,387.8154,295.7255,284.6902,354.336,523.4837,449.9687,320.9914,369.2539,436.2001,392.8663,352.4444],"Uganda (national)":[294.8274,279.7503,322.3324,248.298,314.7311,304.0812,297.9263,426.1897,270.6967,311.5849,309.8974,355.0186,338.358,268.0449,274.2659,200.7447,350.3649,218.4873,204.3762,281.064,321.4338,363.8161,405.4526,311.0284,299.7311,414.3656,263.2717,243.3622,294.2411,484.3438,400.4972,252.1873,320.4108,359.375,348.8738,354.0043]},"summary":{"Karamoja":{"mean":916.9102,"cv":0.1753,"trend":6.6549,"p":0.0078,"kendall_p":0.0384,"driest":1993,"wettest":2020,"season":{"MAM":{"mean":299.7735,"cv":0.2542,"trend":2.1416,"p":0.0795},"JJA":{"mean":330.7524,"cv":0.2441,"trend":0.9364,"p":0.4777},"SON":{"mean":233.8633,"cv":0.3071,"trend":3.4755,"p":0.0015},"OND":{"mean":175.3134,"cv":0.3935,"trend":2.5411,"p":0.0194}},"share":{"MAM":0.3269,"JJA":0.3607,"SON":0.2551,"DJF":0.0573}},"Eastern":{"mean":1430.9536,"cv":0.1213,"trend":7.21,"p":0.0076,"kendall_p":0.0255,"driest":1993,"wettest":2020,"season":{"MAM":{"mean":488.1481,"cv":0.1446,"trend":1.612,"p":0.1574},"JJA":{"mean":373.8381,"cv":0.169,"trend":1.2037,"p":0.2404},"SON":{"mean":420.1106,"cv":0.2266,"trend":3.5642,"p":0.0173},"OND":{"mean":343.9358,"cv":0.3133,"trend":2.8939,"p":0.0945}},"share":{"MAM":0.3411,"JJA":0.2613,"SON":0.2936,"DJF":0.104}},"Northern":{"mean":1159.72,"cv":0.107,"trend":1.3682,"p":0.5,"kendall_p":0.549,"driest":2009,"wettest":2020,"season":{"MAM":{"mean":343.9971,"cv":0.1716,"trend":0.0314,"p":0.9741},"JJA":{"mean":407.3194,"cv":0.1682,"trend":-0.4484,"p":0.6894},"SON":{"mean":342.7993,"cv":0.1509,"trend":1.723,"p":0.0358},"OND":{"mean":257.5995,"cv":0.232,"trend":1.4426,"p":0.1345}},"share":{"MAM":0.2966,"JJA":0.3512,"SON":0.2956,"DJF":0.0566}},"Central":{"mean":1208.9805,"cv":0.0921,"trend":2.2049,"p":0.2218,"kendall_p":0.3834,"driest":2009,"wettest":2019,"season":{"MAM":{"mean":433.8814,"cv":0.1084,"trend":0.203,"p":0.7923},"JJA":{"mean":205.57,"cv":0.1821,"trend":0.5804,"p":0.3411},"SON":{"mean":382.2103,"cv":0.1584,"trend":0.8758,"p":0.3749},"OND":{"mean":351.9192,"cv":0.228,"trend":1.1227,"p":0.3909}},"share":{"MAM":0.3589,"JJA":0.17,"SON":0.3161,"DJF":0.1549}},"Western":{"mean":1141.2559,"cv":0.0743,"trend":1.2673,"p":0.3591,"kendall_p":0.4138,"driest":2009,"wettest":2012,"season":{"MAM":{"mean":362.1456,"cv":0.12,"trend":0.194,"p":0.7852},"JJA":{"mean":201.3832,"cv":0.1828,"trend":0.1827,"p":0.7619},"SON":{"mean":404.2647,"cv":0.1095,"trend":0.9841,"p":0.1691},"OND":{"mean":363.7463,"cv":0.1379,"trend":0.9079,"p":0.2654}},"share":{"MAM":0.3173,"JJA":0.1765,"SON":0.3542,"DJF":0.152}},"Lake Victoria basin":{"mean":1100.7155,"cv":0.0892,"trend":2.3037,"p":0.1461,"kendall_p":0.1647,"driest":2009,"wettest":2020,"season":{"MAM":{"mean":392.2537,"cv":0.1076,"trend":0.7287,"p":0.2883},"JJA":{"mean":142.3076,"cv":0.2193,"trend":0.2895,"p":0.5707},"SON":{"mean":358.1366,"cv":0.146,"trend":0.8961,"p":0.2921},"OND":{"mean":352.8431,"cv":0.1892,"trend":1.062,"p":0.3287}},"share":{"MAM":0.3564,"JJA":0.1293,"SON":0.3254,"DJF":0.189}},"Uganda (national)":{"mean":1202.8107,"cv":0.0883,"trend":2.3231,"p":0.1765,"kendall_p":0.3267,"driest":2009,"wettest":2020,"season":{"MAM":{"mean":385.9555,"cv":0.1274,"trend":0.326,"p":0.6856},"JJA":{"mean":313.0975,"cv":0.1574,"trend":0.1373,"p":0.8651},"SON":{"mean":376.4917,"cv":0.1365,"trend":1.6363,"p":0.0455},"OND":{"mean":314.0954,"cv":0.1995,"trend":1.452,"p":0.1514}},"share":{"MAM":0.3209,"JJA":0.2603,"SON":0.313,"DJF":0.1058}}},"coherence":{"annual":{"m":[[1.0,0.792,0.8386,0.5301,0.5866,0.6018],[0.792,1.0,0.7849,0.7082,0.5409,0.6914],[0.8386,0.7849,1.0,0.6855,0.7363,0.7011],[0.5301,0.7082,0.6855,1.0,0.7276,0.9582],[0.5866,0.5409,0.7363,0.7276,1.0,0.7845],[0.6018,0.6914,0.7011,0.9582,0.7845,1.0]],"mean":0.7112,"min":0.5301,"max":0.9582},"MAM":{"m":[[1.0,0.8092,0.8839,0.5813,0.7152,0.6281],[0.8092,1.0,0.8295,0.6414,0.5168,0.5617],[0.8839,0.8295,1.0,0.7094,0.7772,0.6666],[0.5813,0.6414,0.7094,1.0,0.737,0.9222],[0.7152,0.5168,0.7772,0.737,1.0,0.7459],[0.6281,0.5617,0.6666,0.9222,0.7459,1.0]],"mean":0.715,"min":0.5168,"max":0.9222},"OND":{"m":[[1.0,0.7727,0.8385,0.5407,0.4569,0.6014],[0.7727,1.0,0.8865,0.8331,0.6288,0.7886],[0.8385,0.8865,1.0,0.8045,0.7217,0.8063],[0.5407,0.8331,0.8045,1.0,0.8052,0.9588],[0.4569,0.6288,0.7217,0.8052,1.0,0.8716],[0.6014,0.7886,0.8063,0.9588,0.8716,1.0]],"mean":0.7544,"min":0.4569,"max":0.9588}},"coupling":{"Karamoja":{"mam_ond":-0.0024,"p_mam_ond":0.9887,"ond_next_mam":0.4396,"p_ond_next_mam":0.0082},"Eastern":{"mam_ond":0.143,"p_mam_ond":0.4055,"ond_next_mam":0.1928,"p_ond_next_mam":0.2671},"Northern":{"mam_ond":0.1262,"p_mam_ond":0.4634,"ond_next_mam":0.1697,"p_ond_next_mam":0.3298},"Central":{"mam_ond":0.2165,"p_mam_ond":0.2047,"ond_next_mam":0.1104,"p_ond_next_mam":0.528},"Western":{"mam_ond":0.3515,"p_mam_ond":0.0356,"ond_next_mam":0.0372,"p_ond_next_mam":0.832},"Lake Victoria basin":{"mam_ond":0.2831,"p_mam_ond":0.0944,"ond_next_mam":0.1795,"p_ond_next_mam":0.3023},"Uganda (national)":{"mam_ond":0.211,"p_mam_ond":0.2167,"ond_next_mam":0.1209,"p_ond_next_mam":0.4889}},"lead":{"Aug DMI":{"Karamoja":{"r":0.232,"p":0.1734},"Eastern":{"r":0.3933,"p":0.0177},"Northern":{"r":0.3193,"p":0.0577},"Central":{"r":0.4856,"p":0.0027},"Western":{"r":0.2749,"p":0.1047},"Lake Victoria basin":{"r":0.484,"p":0.0028},"Uganda (national)":{"r":0.3966,"p":0.0166}},"Sep DMI":{"Karamoja":{"r":0.2641,"p":0.1196},"Eastern":{"r":0.4737,"p":0.0035},"Northern":{"r":0.3833,"p":0.021},"Central":{"r":0.57,"p":0.0003},"Western":{"r":0.3001,"p":0.0754},"Lake Victoria basin":{"r":0.5468,"p":0.0006},"Uganda (national)":{"r":0.4675,"p":0.004}},"Jul\u2013Sep ONI":{"Karamoja":{"r":0.2542,"p":0.1346},"Eastern":{"r":0.4099,"p":0.013},"Northern":{"r":0.3485,"p":0.0372},"Central":{"r":0.4255,"p":0.0097},"Western":{"r":0.1606,"p":0.3494},"Lake Victoria basin":{"r":0.3429,"p":0.0406},"Uganda (national)":{"r":0.375,"p":0.0242}},"Oct\u2013Dec DMI (same season)":{"Karamoja":{"r":0.3287,"p":0.0503},"Eastern":{"r":0.5053,"p":0.0017},"Northern":{"r":0.4481,"p":0.0061},"Central":{"r":0.5865,"p":0.0002},"Western":{"r":0.2578,"p":0.129},"Lake Victoria basin":{"r":0.5412,"p":0.0007},"Uganda (national)":{"r":0.4967,"p":0.0021}}},"skill":{"Jul\u2013Aug":{"Karamoja":{"cv_r":0.1506,"mse_skill":0.0496,"tercile_hit":0.3611},"Eastern":{"cv_r":0.3159,"mse_skill":0.1326,"tercile_hit":0.5278},"Northern":{"cv_r":0.2363,"mse_skill":0.0884,"tercile_hit":0.4722},"Central":{"cv_r":0.4054,"mse_skill":0.1981,"tercile_hit":0.5556},"Western":{"cv_r":0.1146,"mse_skill":0.0366,"tercile_hit":0.3056},"Lake Victoria basin":{"cv_r":0.4279,"mse_skill":0.2187,"tercile_hit":0.5833},"Uganda (national)":{"cv_r":0.3214,"mse_skill":0.1381,"tercile_hit":0.4444}},"Sep":{"Karamoja":{"cv_r":0.0268,"mse_skill":-0.0019,"tercile_hit":0.3611},"Eastern":{"cv_r":0.3452,"mse_skill":0.1499,"tercile_hit":0.5278},"Northern":{"cv_r":0.2286,"mse_skill":0.0807,"tercile_hit":0.4444},"Central":{"cv_r":0.4675,"mse_skill":0.2516,"tercile_hit":0.4722},"Western":{"cv_r":0.1424,"mse_skill":0.052,"tercile_hit":0.3611},"Lake Victoria basin":{"cv_r":0.4519,"mse_skill":0.2398,"tercile_hit":0.5},"Uganda (national)":{"cv_r":0.3469,"mse_skill":0.1547,"tercile_hit":0.5}}},"conditional":{"Karamoja":{"pos_n":6,"pos_above_median":0.8333,"pos_upper_tercile":0.5,"pos_lower_tercile":0.1667,"neg_n":4,"neg_below_median":0.75,"neutral_above_median":0.4615},"Eastern":{"pos_n":6,"pos_above_median":0.6667,"pos_upper_tercile":0.6667,"pos_lower_tercile":0.1667,"neg_n":4,"neg_below_median":0.75,"neutral_above_median":0.5},"Northern":{"pos_n":6,"pos_above_median":0.8333,"pos_upper_tercile":0.6667,"pos_lower_tercile":0.1667,"neg_n":4,"neg_below_median":0.75,"neutral_above_median":0.4615},"Central":{"pos_n":6,"pos_above_median":0.8333,"pos_upper_tercile":0.8333,"pos_lower_tercile":0.1667,"neg_n":4,"neg_below_median":0.5,"neutral_above_median":0.4231},"Western":{"pos_n":6,"pos_above_median":0.8333,"pos_upper_tercile":0.6667,"pos_lower_tercile":0.1667,"neg_n":4,"neg_below_median":0.75,"neutral_above_median":0.4615},"Lake Victoria basin":{"pos_n":6,"pos_above_median":0.8333,"pos_upper_tercile":0.8333,"pos_lower_tercile":0.1667,"neg_n":4,"neg_below_median":0.75,"neutral_above_median":0.4615},"Uganda (national)":{"pos_n":6,"pos_above_median":0.8333,"pos_upper_tercile":0.6667,"pos_lower_tercile":0.1667,"neg_n":4,"neg_below_median":0.75,"neutral_above_median":0.4615}},"sep_dmi":[-0.183,0.099,-0.833,-0.17,0.529,-0.18,-0.712,0.771,-0.496,-0.049,-0.096,-0.223,0.286,-0.06,-0.106,-0.534,0.428,0.235,0.086,-0.103,-0.267,0.202,0.453,-0.31,-0.145,0.294,-0.437,0.035,0.604,0.892,-0.189,-0.058,-0.322,0.946,0.115,-0.467],"ja_dmi":[-0.3185,0.1635,-0.6235,-0.229,0.684,-0.1565,-0.6625,0.54,-0.4825,0.067,0.104,-0.2205,-0.2345,0.1195,-0.217,-0.3645,0.1345,0.141,0.185,-0.148,-0.031,0.2835,0.599,-0.1875,-0.3675,0.3965,-0.6,0.4345,0.087,0.5165,0.068,-0.164,-0.2205,0.662,0.15,-0.246],"monthly_trend":{"Karamoja":[{"slope":-0.1005,"p":0.4089},{"slope":-0.0616,"p":0.798},{"slope":0.6592,"p":0.2366},{"slope":1.4781,"p":0.0521},{"slope":0.0043,"p":0.9945},{"slope":-0.2367,"p":0.7059},{"slope":0.4688,"p":0.4958},{"slope":0.7044,"p":0.2859},{"slope":1.1979,"p":0.0056},{"slope":2.1639,"p":0.0137},{"slope":0.1137,"p":0.8285},{"slope":0.2635,"p":0.4022}],"Eastern":[{"slope":0.0557,"p":0.8637},{"slope":0.1191,"p":0.8134},{"slope":0.5338,"p":0.4611},{"slope":0.8308,"p":0.168},{"slope":0.2474,"p":0.6879},{"slope":0.3751,"p":0.4955},{"slope":0.4749,"p":0.3729},{"slope":0.3537,"p":0.5516},{"slope":1.3257,"p":0.0158},{"slope":1.1702,"p":0.1305},{"slope":1.0683,"p":0.2278},{"slope":0.6554,"p":0.3326}],"Northern":[{"slope":-0.1724,"p":0.1699},{"slope":0.0362,"p":0.8811},{"slope":0.3986,"p":0.4159},{"slope":0.0096,"p":0.9869},{"slope":-0.3767,"p":0.4326},{"slope":-0.0158,"p":0.9734},{"slope":-0.2705,"p":0.622},{"slope":-0.1622,"p":0.7524},{"slope":0.4788,"p":0.1208},{"slope":1.0085,"p":0.1024},{"slope":0.2357,"p":0.613},{"slope":0.1984,"p":0.563}],"Central":[{"slope":-0.1891,"p":0.5769},{"slope":-0.0003,"p":0.9991},{"slope":0.1691,"p":0.6868},{"slope":0.7197,"p":0.1714},{"slope":-0.6858,"p":0.067},{"slope":0.2149,"p":0.4087},{"slope":0.0262,"p":0.9334},{"slope":0.3393,"p":0.3334},{"slope":0.4883,"p":0.2045},{"slope":-0.176,"p":0.6775},{"slope":0.5635,"p":0.4204},{"slope":0.7352,"p":0.171}],"Western":[{"slope":-0.3319,"p":0.1183},{"slope":-0.0304,"p":0.9319},{"slope":0.3268,"p":0.2985},{"slope":0.348,"p":0.4286},{"slope":-0.4807,"p":0.1016},{"slope":0.111,"p":0.6543},{"slope":-0.2111,"p":0.3854},{"slope":0.2828,"p":0.4614},{"slope":0.345,"p":0.3196},{"slope":0.435,"p":0.2565},{"slope":0.2042,"p":0.6107},{"slope":0.2687,"p":0.4549}],"Lake Victoria basin":[{"slope":-0.232,"p":0.4771},{"slope":-0.1115,"p":0.735},{"slope":0.1813,"p":0.5922},{"slope":1.0104,"p":0.031},{"slope":-0.4629,"p":0.1639},{"slope":0.1493,"p":0.5073},{"slope":-0.0938,"p":0.6374},{"slope":0.2341,"p":0.4991},{"slope":0.567,"p":0.1215},{"slope":-0.0272,"p":0.9385},{"slope":0.3564,"p":0.5258},{"slope":0.7328,"p":0.1258}],"Uganda (national)":[{"slope":-0.1831,"p":0.3386},{"slope":0.0243,"p":0.9351},{"slope":0.3556,"p":0.4046},{"slope":0.3443,"p":0.4812},{"slope":-0.3739,"p":0.2996},{"slope":0.115,"p":0.7374},{"slope":-0.0944,"p":0.8134},{"slope":0.1167,"p":0.761},{"slope":0.5666,"p":0.0462},{"slope":0.6621,"p":0.1515},{"slope":0.4075,"p":0.4054},{"slope":0.3823,"p":0.3224}]},"monthly_dmi":{"Karamoja":[{"r":0.2471,"p":0.1462},{"r":0.099,"p":0.5656},{"r":0.156,"p":0.3636},{"r":-0.0114,"p":0.9472},{"r":0.0671,"p":0.6974},{"r":0.3371,"p":0.0444},{"r":0.3307,"p":0.0488},{"r":-0.0771,"p":0.6549},{"r":-0.0509,"p":0.768},{"r":-0.0149,"p":0.9314},{"r":0.478,"p":0.0032},{"r":0.3351,"p":0.0457}],"Eastern":[{"r":0.3442,"p":0.0398},{"r":0.0807,"p":0.6398},{"r":0.1127,"p":0.5128},{"r":-0.0099,"p":0.9542},{"r":0.3265,"p":0.052},{"r":0.4507,"p":0.0058},{"r":0.3284,"p":0.0505},{"r":-0.0742,"p":0.6673},{"r":-0.0102,"p":0.9529},{"r":0.2972,"p":0.0784},{"r":0.3665,"p":0.0279},{"r":0.4047,"p":0.0144}],"Northern":[{"r":0.1884,"p":0.2711},{"r":0.1142,"p":0.5072},{"r":0.0469,"p":0.7859},{"r":-0.0781,"p":0.6507},{"r":0.0872,"p":0.613},{"r":0.3833,"p":0.021},{"r":0.3602,"p":0.0309},{"r":-0.0666,"p":0.6997},{"r":-0.1218,"p":0.4793},{"r":0.0281,"p":0.8709},{"r":0.5133,"p":0.0014},{"r":0.4119,"p":0.0126}],"Central":[{"r":0.2214,"p":0.1943},{"r":0.1347,"p":0.4333},{"r":0.0452,"p":0.7935},{"r":0.1791,"p":0.2959},{"r":0.1495,"p":0.384},{"r":0.2688,"p":0.1129},{"r":0.2135,"p":0.2112},{"r":0.0456,"p":0.7917},{"r":-0.1631,"p":0.3418},{"r":0.3648,"p":0.0287},{"r":0.4998,"p":0.0019},{"r":0.4705,"p":0.0038}],"Western":[{"r":0.2117,"p":0.2152},{"r":-0.0032,"p":0.9851},{"r":-0.12,"p":0.4859},{"r":-0.0859,"p":0.6182},{"r":0.0051,"p":0.9763},{"r":0.1942,"p":0.2565},{"r":0.3003,"p":0.0752},{"r":0.0271,"p":0.8752},{"r":-0.136,"p":0.4292},{"r":0.0385,"p":0.8234},{"r":0.2492,"p":0.1427},{"r":0.3593,"p":0.0314}],"Lake Victoria basin":[{"r":0.2714,"p":0.1094},{"r":0.0735,"p":0.6701},{"r":0.0089,"p":0.9588},{"r":0.1234,"p":0.4732},{"r":0.2095,"p":0.22},{"r":0.2597,"p":0.1261},{"r":0.2172,"p":0.2032},{"r":0.1066,"p":0.5359},{"r":-0.0843,"p":0.6252},{"r":0.2559,"p":0.1319},{"r":0.5019,"p":0.0018},{"r":0.4782,"p":0.0032}],"Uganda (national)":[{"r":0.2673,"p":0.115},{"r":0.0847,"p":0.6232},{"r":0.0359,"p":0.8354},{"r":-0.0228,"p":0.895},{"r":0.1579,"p":0.3576},{"r":0.3977,"p":0.0163},{"r":0.3475,"p":0.0378},{"r":-0.0391,"p":0.8209},{"r":-0.1395,"p":0.4171},{"r":0.1573,"p":0.3597},{"r":0.4852,"p":0.0027},{"r":0.4611,"p":0.0047}]},"failed":{"MAM":{"Karamoja":{"1990":2,"2000":2,"2010":3,"2020":0},"Eastern":{"1990":3,"2000":4,"2010":0,"2020":0},"Northern":{"1990":1,"2000":2,"2010":2,"2020":2},"Central":{"1990":1,"2000":4,"2010":1,"2020":1},"Western":{"1990":2,"2000":2,"2010":1,"2020":2},"Lake Victoria basin":{"1990":2,"2000":4,"2010":0,"2020":1},"Uganda (national)":{"1990":1,"2000":4,"2010":1,"2020":1}},"OND":{"Karamoja":{"1990":1,"2000":3,"2010":2,"2020":1},"Eastern":{"1990":1,"2000":3,"2010":2,"2020":1},"Northern":{"1990":1,"2000":3,"2010":2,"2020":1},"Central":{"1990":2,"2000":3,"2010":2,"2020":0},"Western":{"1990":0,"2000":6,"2010":1,"2020":0},"Lake Victoria basin":{"1990":1,"2000":3,"2010":3,"2020":0},"Uganda (national)":{"1990":1,"2000":3,"2010":2,"2020":1}}},"drivers":{"OND":{"Karamoja":{"r_dmi":0.3287,"p_dmi":0.0503,"r_oni":0.2274,"p_oni":0.1822},"Eastern":{"r_dmi":0.5053,"p_dmi":0.0017,"r_oni":0.4127,"p_oni":0.0124},"Northern":{"r_dmi":0.4481,"p_dmi":0.0061,"r_oni":0.3438,"p_oni":0.0401},"Central":{"r_dmi":0.5865,"p_dmi":0.0002,"r_oni":0.4265,"p_oni":0.0095},"Western":{"r_dmi":0.2578,"p_dmi":0.129,"r_oni":0.1816,"p_oni":0.2892},"Lake Victoria basin":{"r_dmi":0.5412,"p_dmi":0.0007,"r_oni":0.3458,"p_oni":0.0388},"Uganda (national)":{"r_dmi":0.4967,"p_dmi":0.0021,"r_oni":0.3782,"p_oni":0.0229}},"SON":{"Karamoja":{"r_dmi":0.1775,"p_dmi":0.3002,"r_oni":-0.0542,"p_oni":0.7537},"Eastern":{"r_dmi":0.3534,"p_dmi":0.0345,"r_oni":0.1536,"p_oni":0.3712},"Northern":{"r_dmi":0.2447,"p_dmi":0.1503,"r_oni":0.0149,"p_oni":0.9314},"Central":{"r_dmi":0.4797,"p_dmi":0.0031,"r_oni":0.2584,"p_oni":0.1281},"Western":{"r_dmi":0.1093,"p_dmi":0.5256,"r_oni":-0.0576,"p_oni":0.7385},"Lake Victoria basin":{"r_dmi":0.442,"p_dmi":0.007,"r_oni":0.194,"p_oni":0.2569},"Uganda (national)":{"r_dmi":0.3271,"p_dmi":0.0515,"r_oni":0.0923,"p_oni":0.5924}},"MAM":{"Karamoja":{"r_dmi":-0.0125,"p_dmi":0.9423,"r_oni":-0.0576,"p_oni":0.7385},"Eastern":{"r_dmi":0.1026,"p_dmi":0.5514,"r_oni":-0.1377,"p_oni":0.423},"Northern":{"r_dmi":-0.0957,"p_dmi":0.5788,"r_oni":0.0045,"p_oni":0.9792},"Central":{"r_dmi":0.059,"p_dmi":0.7324,"r_oni":-0.1107,"p_oni":0.5202},"Western":{"r_dmi":-0.1801,"p_dmi":0.2932,"r_oni":-0.0437,"p_oni":0.8001},"Lake Victoria basin":{"r_dmi":0.0714,"p_dmi":0.6792,"r_oni":-0.0723,"p_oni":0.6752},"Uganda (national)":{"r_dmi":-0.0563,"p_dmi":0.7442,"r_oni":-0.0551,"p_oni":0.7494}},"JJA":{"Karamoja":{"r_dmi":0.3173,"p_dmi":0.0593,"r_oni":-0.2172,"p_oni":0.2032},"Eastern":{"r_dmi":0.3807,"p_dmi":0.022,"r_oni":-0.1766,"p_oni":0.303},"Northern":{"r_dmi":0.3134,"p_dmi":0.0627,"r_oni":-0.1596,"p_oni":0.3524},"Central":{"r_dmi":0.2792,"p_dmi":0.0991,"r_oni":-0.2006,"p_oni":0.2408},"Western":{"r_dmi":0.2053,"p_dmi":0.2297,"r_oni":-0.2438,"p_oni":0.1519},"Lake Victoria basin":{"r_dmi":0.2864,"p_dmi":0.0904,"r_oni":-0.1965,"p_oni":0.2508},"Uganda (national)":{"r_dmi":0.3302,"p_dmi":0.0492,"r_oni":-0.1993,"p_oni":0.2438}}},"trend_control":{"SON":{"Karamoja":{"trend":3.4755,"p":0.0015,"trend_ctrl":3.3751,"p_ctrl":0.0028,"r2":0.2599,"r2_ctrl":0.2638},"Eastern":{"trend":3.5642,"p":0.0173,"trend_ctrl":2.9908,"p_ctrl":0.0427,"r2":0.1556,"r2_ctrl":0.2287},"Northern":{"trend":1.723,"p":0.0358,"trend_ctrl":1.5283,"p_ctrl":0.0675,"r2":0.1232,"r2_ctrl":0.1518},"Central":{"trend":0.8758,"p":0.3749,"trend_ctrl":0.2597,"p_ctrl":0.7748,"r2":0.0232,"r2_ctrl":0.232},"Western":{"trend":0.9841,"p":0.1691,"trend_ctrl":0.9276,"p_ctrl":0.2121,"r2":0.0549,"r2_ctrl":0.0582},"Lake Victoria basin":{"trend":0.8961,"p":0.2921,"trend_ctrl":0.4167,"p_ctrl":0.6028,"r2":0.0326,"r2_ctrl":0.202},"Uganda (national)":{"trend":1.6363,"p":0.0455,"trend_ctrl":1.3419,"p_ctrl":0.099,"r2":0.1125,"r2_ctrl":0.1787}},"OND":{"Karamoja":{"trend":2.5411,"p":0.0194,"trend_ctrl":2.1733,"p_ctrl":0.0438,"r2":0.1506,"r2_ctrl":0.2129},"Eastern":{"trend":2.8939,"p":0.0945,"trend_ctrl":1.8484,"p_ctrl":0.239,"r2":0.0801,"r2_ctrl":0.2864},"Northern":{"trend":1.4426,"p":0.1345,"trend_ctrl":0.9293,"p_ctrl":0.3042,"r2":0.0647,"r2_ctrl":0.2263},"Central":{"trend":1.1227,"p":0.3909,"trend_ctrl":0.1491,"p_ctrl":0.893,"r2":0.0217,"r2_ctrl":0.3444},"Western":{"trend":0.9079,"p":0.2654,"trend_ctrl":0.6706,"p_ctrl":0.4152,"r2":0.0363,"r2_ctrl":0.0854},"Lake Victoria basin":{"trend":1.062,"p":0.3287,"trend_ctrl":0.3245,"p_ctrl":0.7346,"r2":0.0281,"r2_ctrl":0.2954},"Uganda (national)":{"trend":1.452,"p":0.1514,"trend_ctrl":0.844,"p_ctrl":0.3601,"r2":0.0596,"r2_ctrl":0.2658}}},"partial":{"OND":{"Karamoja":{"dmi_given_oni":0.2437,"p_dmi":0.1521,"oni_given_dmi":-0.0021,"p_oni":0.9901},"Eastern":{"dmi_given_oni":0.3334,"p_dmi":0.0469,"oni_given_dmi":0.0981,"p_oni":0.5691},"Northern":{"dmi_given_oni":0.3096,"p_dmi":0.0661,"oni_given_dmi":0.0494,"p_oni":0.7746},"Central":{"dmi_given_oni":0.446,"p_dmi":0.0064,"oni_given_dmi":0.0311,"p_oni":0.8571},"Western":{"dmi_given_oni":0.1861,"p_dmi":0.277,"oni_given_dmi":0.0029,"p_oni":0.9864},"Lake Victoria basin":{"dmi_given_oni":0.4461,"p_dmi":0.0064,"oni_given_dmi":-0.0516,"p_oni":0.7652},"Uganda (national)":{"dmi_given_oni":0.3512,"p_dmi":0.0357,"oni_given_dmi":0.0519,"p_oni":0.7639}},"JJA":{"Karamoja":{"dmi_given_oni":0.4407,"p_dmi":0.0071,"oni_given_dmi":-0.3825,"p_oni":0.0213,"r_without_top3":0.3744},"Eastern":{"dmi_given_oni":0.4898,"p_dmi":0.0024,"oni_given_dmi":-0.3726,"p_oni":0.0252,"r_without_top3":0.3775},"Northern":{"dmi_given_oni":0.4079,"p_dmi":0.0135,"oni_given_dmi":-0.3149,"p_oni":0.0614,"r_without_top3":0.3235},"Central":{"dmi_given_oni":0.3903,"p_dmi":0.0186,"oni_given_dmi":-0.343,"p_oni":0.0405,"r_without_top3":0.4043},"Western":{"dmi_given_oni":0.3301,"p_dmi":0.0493,"oni_given_dmi":-0.3536,"p_oni":0.0344,"r_without_top3":0.3903},"Lake Victoria basin":{"dmi_given_oni":0.3962,"p_dmi":0.0167,"oni_given_dmi":-0.3422,"p_oni":0.0411,"r_without_top3":0.4482},"Uganda (national)":{"dmi_given_oni":0.4458,"p_dmi":0.0064,"oni_given_dmi":-0.3694,"p_oni":0.0266,"r_without_top3":0.387}}}}</script>
+<script>
+(function(){
+const D = JSON.parse(document.getElementById('report-data').textContent);
+const ORDER = D.order, REG = D.regions, YEARS = D.years, N = 'Uganda (national)';
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const fmt0 = d3.format(',.0f'), fmt2 = d3.format('.2f'), sgn0 = d3.format('+.0f'), sgn1 = d3.format('+.1f'), sgn2 = d3.format('+.2f');
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const short = r => r === 'Lake Victoria basin' ? 'L. Victoria basin' : r;
+const pTxt = p => p < 0.001 ? 'p < 0.001' : 'p = ' + (+p.toPrecision(2)).toString();
+const pill = p => `<span class="pill ${p < 0.05 ? 'sig' : p < 0.1 ? 'border' : 'ns'}">${pTxt(p)}</span>`;
+const z0 = v => Math.abs(v) < 0.005 ? 0 : v;
+const dark = () => d3.hsl(css('--bg')).l < .3;
+
+const tip = document.getElementById('tip');
+function showTip(html, ev){
+  tip.innerHTML = html; tip.style.opacity = 1;
+  const r = tip.getBoundingClientRect(), pad = 14;
+  let x = ev.clientX + pad, y = ev.clientY + pad;
+  if (x + r.width > innerWidth - 8) x = ev.clientX - r.width - pad;
+  if (y + r.height > innerHeight - 8) y = ev.clientY - r.height - pad;
+  tip.style.left = Math.max(8, x) + 'px'; tip.style.top = Math.max(8, y) + 'px';
+}
+const hideTip = () => { tip.style.opacity = 0; };
+const row = (k, v, c) => `<div class="row"><span>${c ? `<i class="dot" style="background:${c}"></i>` : ''}${k}</span><b>${v}</b></div>`;
+function frame(el, h, m){
+  if (typeof el === 'string') el = document.getElementById(el);
+  el.innerHTML = '';
+  const W = Math.max(260, el.clientWidth);
+  const svg = d3.select(el).append('svg').attr('width', W).attr('height', h).attr('viewBox', `0 0 ${W} ${h}`);
+  const g = svg.append('g').attr('transform', `translate(${m.l},${m.t})`);
+  return {el, svg, g, w: W - m.l - m.r, h: h - m.t - m.b};
+}
+function labels(f, y, list){
+  list.forEach(r => f.g.append('text').attr('x', -12).attr('y', y(r) + y.bandwidth()/2 + 4).attr('text-anchor','end').attr('class','lab')
+    .style('fill', css('--ink')).style('font-weight', r.startsWith('Uganda') ? 400 : 600).text(short(r)));
+}
+function xAxis(f, x, fmt, ticks){
+  f.g.append('g').attr('transform', `translate(0,${f.h})`).call(d3.axisBottom(x).ticks(ticks || 6).tickSize(-f.h).tickFormat(fmt))
+    .call(a => a.selectAll('.tick line').attr('stroke', d => d === 0 ? css('--ink-2') : css('--grid')))
+    .call(a => a.selectAll('.tick text').attr('dy','1.1em'));
+}
+const divColor = (v, max) => v >= 0 ? d3.interpolateRgb(css('--neutral'), css('--wet-deep'))(Math.min(1, v / max))
+                                    : d3.interpolateRgb(css('--neutral'), css('--dry'))(Math.min(1, -v / max));
+const inkOn = (v, max) => Math.abs(v) / max > .55 ? (dark() ? '#0f1411' : '#ffffff') : css('--ink-2');
+
+/* KPIs and inline numbers */
+function fill(){
+  const s = D.summary;
+  document.getElementById('k-mean').innerHTML = fmt0(s[N].mean) + '<small>mm</small>';
+  document.getElementById('k-kar').innerHTML = sgn1(s.Karamoja.trend) + '<small>mm/yr</small>';
+  document.getElementById('k-cv').innerHTML = Math.round(s[N].season.OND.cv * 100) + '<small>%</small>';
+  const c = D.conditional[N];
+  document.getElementById('k-pos').textContent = `${Math.round(c.pos_above_median * c.pos_n)} of ${c.pos_n}`;
+  document.getElementById('n-cvond').textContent = Math.round(s[N].season.OND.cv * 100) + '%';
+  document.getElementById('n-cvmam').textContent = Math.round(s[N].season.MAM.cv * 100) + '%';
+  document.getElementById('n-cvkar').textContent = Math.round(s.Karamoja.season.OND.cv * 100) + '%';
+  document.getElementById('n-coh').textContent = D.coherence.OND.mean.toFixed(2);
+  document.getElementById('n-pos').textContent = `${Math.round(c.pos_above_median * c.pos_n)} of ${c.pos_n}`;
+  const hits = ['Central', 'Lake Victoria basin'].map(r => Math.round(D.skill['Jul–Aug'][r].tercile_hit * 100));
+  document.getElementById('n-hit').textContent = `${Math.min(...hits)}–${Math.max(...hits)}%`;
+  document.getElementById('n-wc').textContent = D.coupling.Western.mam_ond.toFixed(2);
+  document.getElementById('n-karc').textContent = D.coupling.Karamoja.ond_next_mam.toFixed(2);
+}
+
+/* 01 season shares */
+function shares(){
+  const isS = innerWidth < 600;
+  const f = frame('c-share', 40 * ORDER.length + 36, {t:6, r:10, b:28, l: isS ? 112 : 150});
+  const y = d3.scaleBand().domain(ORDER).range([0, f.h]).padding(.28);
+  const x = d3.scaleLinear().domain([0, 1]).range([0, f.w]);
+  const S = [['MAM','Mar–May','--mam'],['JJA','Jun–Aug','--jja'],['SON','Sep–Nov','--son'],['DJF','Dec–Feb','--rest']];
+  f.g.append('g').attr('transform', `translate(0,${f.h})`).call(d3.axisBottom(x).ticks(5).tickFormat(d3.format('.0%')).tickSize(0)).call(a => a.selectAll('text').attr('dy','1.3em'));
+  labels(f, y, ORDER);
+  ORDER.forEach(r => {
+    let acc = 0; const sh = D.summary[r].share, mean = D.summary[r].mean;
+    S.forEach(([k, name, v]) => {
+      const w = x(sh[k]) - x(0), x0 = x(acc);
+      f.g.append('rect').attr('x', x0 + (acc > 0 ? 1 : 0)).attr('y', y(r)).attr('width', Math.max(0, w - (acc > 0 ? 1 : 0) - 1)).attr('height', y.bandwidth())
+        .attr('rx', 3).attr('fill', css(v))
+        .on('pointermove', ev => showTip(`<div class="t">${r} · ${name}</div>${row('Share of year', Math.round(sh[k]*100) + '%', css(v))}${row('Average', fmt0(sh[k]*mean) + ' mm')}`, ev))
+        .on('pointerleave', hideTip);
+      if (w > 34) f.g.append('text').attr('x', x0 + w/2).attr('y', y(r) + y.bandwidth()/2 + 4).attr('text-anchor','middle').attr('pointer-events','none')
+        .style('font-family','var(--f-mono)').style('font-size','11.5px').style('font-weight', 500)
+        .style('fill', k === 'DJF' ? css('--ink') : (k === 'JJA' && !dark() ? '#1f1a10' : '#ffffff')).text(Math.round(sh[k]*100) + '%');
+      acc += sh[k];
+    });
+  });
+}
+
+/* 02 monthly trend heatmap + table */
+function mtrend(){
+  const isS = innerWidth < 600;
+  const f = frame('c-mtrend', 46 * ORDER.length + 34, {t:28, r:8, b:6, l:150});
+  const x = d3.scaleBand().domain(d3.range(1,13)).range([0, f.w]).paddingInner(.06);
+  const y = d3.scaleBand().domain(ORDER).range([0, f.h]).paddingInner(.1);
+  const MAX = 2;
+  ORDER.forEach(r => {
+    const c = D.monthly_trend[r].map((d, k) => ({m: k + 1, s: d.slope, p: d.p}));
+    const gg = f.g.append('g');
+    gg.selectAll('rect').data(c).join('rect').attr('x', d => x(d.m)).attr('y', y(r)).attr('width', x.bandwidth()).attr('height', y.bandwidth()).attr('rx', 4)
+      .attr('fill', d => divColor(d.s, MAX)).attr('stroke', d => d.p < 0.05 ? css('--ink') : 'none').attr('stroke-width', 2)
+      .on('pointermove', (ev, d) => showTip(`<div class="t">${r} · ${MON[d.m-1]}</div>${row('Trend', sgn2(d.s) + ' mm/yr')}${row('Over 36 years', sgn0(d.s * 35) + ' mm')}${row('Significance', pTxt(d.p))}`, ev))
+      .on('pointerleave', hideTip);
+    gg.selectAll('text').data(c).join('text').attr('x', d => x(d.m) + x.bandwidth()/2).attr('y', y(r) + y.bandwidth()/2 + 4)
+      .attr('text-anchor','middle').attr('pointer-events','none').style('font-family','var(--f-mono)').style('font-size','11.5px')
+      .style('fill', d => inkOn(d.s, MAX)).text(d => sgn1(Math.round(d.s * 10) / 10 + 0));
+  });
+  labels(f, y, ORDER);
+  f.g.selectAll('text.mh').data(d3.range(1,13)).join('text').attr('class','mh').attr('x', m => x(m) + x.bandwidth()/2).attr('y', -10)
+    .attr('text-anchor','middle').style('font-family','var(--f-mono)').text(m => isS ? MON[m-1][0] : MON[m-1]);
+  document.getElementById('trend-legend').innerHTML = `<span>Drier <span style="display:inline-flex;gap:2px">${[-1,-.5,0,.5,1,1.5,2].map(v => `<i class="sw" style="background:${divColor(v, MAX)};width:18px;border-radius:2px"></i>`).join('')}</span> Wetter</span>`;
+}
+function trendTable(){
+  const cell = (v, p) => `<span class="num">${sgn1(v)} mm/yr</span><br>${pill(p)}`;
+  document.querySelector('#t-trends tbody').innerHTML = ORDER.map(r => { const s = D.summary[r], q = s.season;
+    return `<tr class="${r.startsWith('Uganda') ? 'ref' : ''}"><td class="reg">${r}</td><td>${cell(s.trend, s.p)}</td>${['MAM','JJA','SON','OND'].map(k => `<td>${cell(q[k].trend, q[k].p)}</td>`).join('')}</tr>`; }).join('');
+}
+
+/* 03 coherence matrix */
+let cohKey = 'OND';
+function coherence(){
+  const n = REG.length, isS = innerWidth < 600;
+  const L = isS ? 112 : 150;
+  const el = document.getElementById('c-coh');
+  const side = Math.min(el.clientWidth - L - 10, 520);
+  const f = frame(el, side + 34, {t:28, r:10, b:6, l:L});
+  const x = d3.scaleBand().domain(REG).range([0, side]).paddingInner(.06);
+  const y = d3.scaleBand().domain(REG).range([0, side]).paddingInner(.06);
+  const M = D.coherence[cohKey].m;
+  const col = v => d3.interpolateRgb(css('--neutral'), css('--wet-deep'))(Math.max(0, (v - .3) / .7));
+  REG.forEach((a, i) => REG.forEach((b, j) => {
+    if (j > i) return;
+    const v = M[i][j];
+    f.g.append('rect').attr('x', x(b)).attr('y', y(a)).attr('width', x.bandwidth()).attr('height', y.bandwidth()).attr('rx', 4)
+      .attr('fill', i === j ? css('--band') : col(v))
+      .on('pointermove', ev => { if (i !== j) showTip(`<div class="t">${a} × ${b}</div>${row('Correlation', fmt2(v))}`, ev); })
+      .on('pointerleave', hideTip);
+    if (i !== j) f.g.append('text').attr('x', x(b) + x.bandwidth()/2).attr('y', y(a) + y.bandwidth()/2 + 4).attr('text-anchor','middle').attr('pointer-events','none')
+      .style('font-family','var(--f-mono)').style('font-size','12px').style('fill', (v - .3) / .7 > .55 ? (dark() ? '#0f1411' : '#ffffff') : css('--ink-2')).text(fmt2(v).replace('0.', '.'));
+  }));
+  labels(f, y, REG);
+  f.g.selectAll('text.ch').data(REG).join('text').attr('class','ch').attr('x', r => x(r) + x.bandwidth()/2).attr('y', -10).attr('text-anchor','middle')
+    .style('font-size','11px').text(r => r === 'Lake Victoria basin' ? 'L. Victoria' : r);
+  const c = D.coherence[cohKey];
+  document.getElementById('coh-sub').textContent = `Darker = more closely linked · average ${c.mean.toFixed(2)}, range ${c.min.toFixed(2)}–${c.max.toFixed(2)}`;
+}
+document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => {
+  cohKey = b.dataset.k; document.querySelectorAll('.tabs button').forEach(o => o.setAttribute('aria-pressed', o === b)); coherence();
+}));
+
+/* 04 coupling */
+function coupling(){
+  const isS = innerWidth < 600;
+  const f = frame('c-coup', 44 * ORDER.length + 40, {t:8, r:56, b:30, l: isS ? 112 : 150});
+  const y = d3.scaleBand().domain(ORDER).range([0, f.h]).padding(.3);
+  const x = d3.scaleLinear().domain([-0.3, 0.6]).range([0, f.w]);
+  xAxis(f, x, d3.format('+.1f'), 9); labels(f, y, ORDER);
+  ORDER.forEach(r => {
+    const c = D.coupling[r], cy = y(r) + y.bandwidth()/2;
+    f.g.append('line').attr('x1', x(c.mam_ond)).attr('x2', x(c.ond_next_mam)).attr('y1', cy).attr('y2', cy).attr('stroke', css('--rule')).attr('stroke-width', 3);
+    [['Mar–May → Oct–Dec', c.mam_ond, c.p_mam_ond, css('--mam')], ['Oct–Dec → next Mar–May', c.ond_next_mam, c.p_ond_next_mam, css('--son')]].forEach(([n, v, p, col]) =>
+      f.g.append('circle').attr('cx', x(v)).attr('cy', cy).attr('r', 7).attr('fill', p < 0.05 ? col : css('--panel')).attr('stroke', col).attr('stroke-width', 2.5)
+        .on('pointermove', ev => showTip(`<div class="t">${r}</div>${row(n, sgn2(v), col)}${row('Significance', pTxt(p))}`, ev)).on('pointerleave', hideTip));
+  });
+}
+
+/* 05 driver matrices */
+function driverGrid(id, key){
+  const isS = innerWidth < 600;
+  const S = ['MAM','JJA','SON','OND'], SL = {MAM:'Mar–May', JJA:'Jun–Aug', SON:'Sep–Nov', OND:'Oct–Dec'};
+  const f = frame(id, 38 * ORDER.length + 30, {t:24, r:4, b:4, l: isS ? 104 : 128});
+  const x = d3.scaleBand().domain(S).range([0, f.w]).paddingInner(.06);
+  const y = d3.scaleBand().domain(ORDER).range([0, f.h]).paddingInner(.1);
+  const MAX = .6;
+  ORDER.forEach(r => S.forEach(s => {
+    const c = D.drivers[s][r], v = c['r_' + key], p = c['p_' + key];
+    f.g.append('rect').attr('x', x(s)).attr('y', y(r)).attr('width', x.bandwidth()).attr('height', y.bandwidth()).attr('rx', 4)
+      .attr('fill', divColor(v, MAX)).attr('stroke', p < 0.05 ? css('--ink') : 'none').attr('stroke-width', 2)
+      .on('pointermove', ev => showTip(`<div class="t">${r} · ${SL[s]}</div>${row('Correlation', sgn2(v))}${row('Significance', pTxt(p))}`, ev)).on('pointerleave', hideTip);
+    f.g.append('text').attr('x', x(s) + x.bandwidth()/2).attr('y', y(r) + y.bandwidth()/2 + 4).attr('text-anchor','middle').attr('pointer-events','none')
+      .style('font-family','var(--f-mono)').style('font-size','11.5px').style('fill', inkOn(v, MAX)).text(fmt2(z0(v)).replace('0.', '.'));
+  }));
+  ORDER.forEach(r => f.g.append('text').attr('x', -10).attr('y', y(r) + y.bandwidth()/2 + 4).attr('text-anchor','end').style('font-size','12px')
+    .style('fill', css('--ink')).style('font-weight', r.startsWith('Uganda') ? 400 : 600).text(short(r)));
+  f.g.selectAll('text.sh').data(S).join('text').attr('class','sh').attr('x', s => x(s) + x.bandwidth()/2).attr('y', -9).attr('text-anchor','middle')
+    .style('font-family','var(--f-mono)').style('font-size','11px').text(s => SL[s]);
+}
+function drivers(){
+  driverGrid('c-drv-dmi', 'dmi'); driverGrid('c-drv-oni', 'oni');
+  document.getElementById('drv-legend').innerHTML = `<span>Drier when index is positive <span style="display:inline-flex;gap:2px;vertical-align:middle">${[-.4,-.2,0,.2,.4,.6].map(v => `<i class="sw" style="background:${divColor(v, .6)};width:18px;border-radius:2px"></i>`).join('')}</span> Wetter</span>`;
+}
+function driverCards(){
+  const P = D.partial;
+  const cards = [
+    ['Oct–Dec', fmt2(P.OND[N].dmi_given_oni), `National partial correlation with the IOD once El Niño is removed. El Niño's, once the IOD is removed: ${sgn2(z0(P.OND[N].oni_given_dmi))}.`],
+    ['Jun–Aug', fmt2(P.JJA.Eastern.dmi_given_oni), `The Eastern region's June–August link to the IOD with El Niño removed. Here El Niño pushes the other way (${sgn2(P.JJA.Eastern.oni_given_dmi)}).`],
+    ['Mar–May', 'none', 'No link between either index and the long rains in any region. The main planting season gets no early signal from these indices.'],
+  ];
+  document.getElementById('drv-cards').innerHTML = cards.map(([t, v, p]) => `<div class="panel"><span class="tag wet"><i></i>${t}</span><div class="big num">${v}</div><p>${p}</p></div>`).join('');
+}
+
+/* 06 skill bars + waffles */
+function skill(){
+  const isS = innerWidth < 600;
+  const K = [['Jul–Aug', '--wet', 'Jul–Aug IOD'], ['Sep', '--wet-deep', 'Sep IOD']];
+  const f = frame('c-skill', 52 * ORDER.length + 36, {t:6, r:44, b:28, l: isS ? 104 : 128});
+  const y = d3.scaleBand().domain(ORDER).range([0, f.h]).padding(.2);
+  const yy = d3.scaleBand().domain(K.map(k => k[0])).range([0, y.bandwidth()]).padding(.12);
+  const x = d3.scaleLinear().domain([0, 0.3]).range([0, f.w]);
+  xAxis(f, x, d3.format('.0%'), 3);
+  ORDER.forEach(r => f.g.append('text').attr('x', -10).attr('y', y(r) + y.bandwidth()/2 + 4).attr('text-anchor','end').style('font-size','12px')
+    .style('fill', css('--ink')).style('font-weight', r.startsWith('Uganda') ? 400 : 600).text(short(r)));
+  ORDER.forEach(r => K.forEach(([k, c, name]) => {
+    const d = D.skill[k][r], w = Math.max(0, x(Math.max(0, d.mse_skill))), y0 = y(r) + yy(k), h = yy.bandwidth();
+    f.g.append('path').attr('d', w > 4 ? `M0,${y0} h${w-4} a4,4 0 0 1 4,4 v${h-8} a4,4 0 0 1 -4,4 h${-(w-4)} Z` : `M0,${y0} h${w} v${h} h${-w} Z`)
+      .attr('fill', css(c))
+      .on('pointermove', ev => showTip(`<div class="t">${r} · ${name}</div>${row('Error reduction', Math.max(0, Math.round(d.mse_skill*100)) + '%', css(c))}${row('Right third picked', Math.round(d.tercile_hit*100) + '% (chance 33%)')}${row('Cross-validated r', fmt2(d.cv_r))}`, ev))
+      .on('pointerleave', hideTip);
+    f.g.append('text').attr('class', k === 'Jul–Aug' ? 'ann-strong' : 'ann').attr('x', w + 6).attr('y', y0 + h/2 + 4).text(Math.max(0, Math.round(d.mse_skill*100)) + '%');
+  }));
+}
+function waffles(){
+  const nat = D.ond[N], sorted = [...nat].sort((a, b) => a - b);
+  const q = p => d3.quantile(sorted, p), t1 = q(1/3), t2 = q(2/3), med = d3.median(nat);
+  const anomaly = v => Math.round(100 * (v / d3.mean(nat) - 1));
+  const box = (yr) => { const v = nat[YEARS.indexOf(yr)], c = v > t2 ? 'wf-up' : v < t1 ? 'wf-low' : 'wf-mid';
+    return `<div class="yr ${c}" title="Oct–Dec ${yr}: ${sgn0(anomaly(v))}% vs average">${yr}<small>${sgn0(anomaly(v))}%</small></div>`; };
+  const pos = YEARS.filter((y, i) => D.ja_dmi[i] >= 0.4), neg = YEARS.filter((y, i) => D.ja_dmi[i] <= -0.4);
+  document.getElementById('wf-pos').innerHTML = pos.map(box).join('');
+  document.getElementById('wf-neg').innerHTML = neg.map(box).join('');
+}
+
+/* 07 failed seasons grids */
+function failGrid(id, key){
+  const isS = innerWidth < 600;
+  const DEC = ['1990','2000','2010','2020'], DL = {'1990':'1990s','2000':'2000s','2010':'2010s','2020':'2020s*'};
+  const f = frame(id, 34 * ORDER.length + 30, {t:24, r:4, b:4, l: isS ? 104 : 128});
+  const x = d3.scaleBand().domain(DEC).range([0, f.w]).paddingInner(.06);
+  const y = d3.scaleBand().domain(ORDER).range([0, f.h]).paddingInner(.1);
+  const col = v => d3.interpolateRgb(css('--neutral'), css('--dry'))(Math.min(1, v / 5));
+  ORDER.forEach(r => DEC.forEach(d => {
+    const v = D.failed[key][r][d];
+    f.g.append('rect').attr('x', x(d)).attr('y', y(r)).attr('width', x.bandwidth()).attr('height', y.bandwidth()).attr('rx', 4).attr('fill', col(v))
+      .on('pointermove', ev => showTip(`<div class="t">${r} · ${DL[d]}</div>${row('Failed seasons', v)}`, ev)).on('pointerleave', hideTip);
+    f.g.append('text').attr('x', x(d) + x.bandwidth()/2).attr('y', y(r) + y.bandwidth()/2 + 4).attr('text-anchor','middle').attr('pointer-events','none')
+      .style('font-family','var(--f-mono)').style('font-size','12px').style('fill', v >= 3 ? '#ffffff' : css('--ink-2')).text(v);
+  }));
+  ORDER.forEach(r => f.g.append('text').attr('x', -10).attr('y', y(r) + y.bandwidth()/2 + 4).attr('text-anchor','end').style('font-size','12px')
+    .style('fill', css('--ink')).style('font-weight', r.startsWith('Uganda') ? 400 : 600).text(short(r)));
+  f.g.selectAll('text.dh').data(DEC).join('text').attr('class','dh').attr('x', d => x(d) + x.bandwidth()/2).attr('y', -9).attr('text-anchor','middle')
+    .style('font-family','var(--f-mono)').style('font-size','11px').text(d => DL[d]);
+}
+
+function allTable(){
+  const cols = [['Avg annual (mm)', r => fmt0(D.summary[r].mean)], ['Annual CV', r => (D.summary[r].cv*100).toFixed(1) + '%'],
+    ['Trend (mm/yr)', r => sgn1(D.summary[r].trend)], ['Trend p', r => D.summary[r].p.toFixed(3)],
+    ['Mar–May CV', r => (D.summary[r].season.MAM.cv*100).toFixed(0) + '%'], ['Oct–Dec CV', r => (D.summary[r].season.OND.cv*100).toFixed(0) + '%'],
+    ['IOD r, Oct–Dec', r => fmt2(D.drivers.OND[r].r_dmi)], ['IOD partial, Jun–Aug', r => fmt2(D.partial.JJA[r].dmi_given_oni)],
+    ['Jul–Aug IOD skill', r => Math.max(0, Math.round(D.skill['Jul–Aug'][r].mse_skill*100)) + '%'], ['Sep IOD skill', r => Math.max(0, Math.round(D.skill.Sep[r].mse_skill*100)) + '%']];
+  document.querySelector('#t-all thead').innerHTML = `<tr><th>Region</th>${cols.map(c => `<th class="r">${c[0]}</th>`).join('')}</tr>`;
+  document.querySelector('#t-all tbody').innerHTML = ORDER.map(r => `<tr><td>${r}</td>${cols.map(c => `<td class="r num">${c[1](r)}</td>`).join('')}</tr>`).join('');
+}
+
+function drawAll(){ shares(); mtrend(); coherence(); coupling(); drivers(); skill(); failGrid('c-fail-mam', 'MAM'); failGrid('c-fail-ond', 'OND'); }
+fill(); trendTable(); driverCards(); waffles(); allTable(); drawAll();
+let raf; const redraw = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(drawAll); };
+let lastW = innerWidth; addEventListener('resize', () => { if (innerWidth !== lastW) { lastW = innerWidth; redraw(); } });
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redraw);
+new MutationObserver(redraw).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(redraw);
+})();
+</script>
+
+</body></html>
