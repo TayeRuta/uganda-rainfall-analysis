@@ -1,6 +1,6 @@
 # Uganda Rainfall Variability & Drought Analysis (1990–2025)
 
-An analysis of 36 years of monthly rainfall over Uganda using CHIRPS satellite precipitation data. It covers long-term trends, drought episodes, the two rainy seasons, decadal shifts and ENSO links, first at the national level and then for six regions.
+An analysis of 36 years of monthly rainfall over Uganda using CHIRPS satellite precipitation data. It covers long-term trends, drought episodes, the two rainy seasons and decadal shifts, first at the national level and then for six regions, and finally tests how the Indian Ocean Dipole and ENSO drive the short rains.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="figures/regional_trends_dark.png">
@@ -25,7 +25,7 @@ An analysis of 36 years of monthly rainfall over Uganda using CHIRPS satellite p
 - **The wetting comes from the short rains.** Karamoja's Sep–Nov trend (+3.5 mm/yr, p = 0.0015) is the strongest result in the project.
 - **Karamoja is the driest and most volatile region.** It averages 917 mm a year, and its annual totals vary about twice as much as the national average.
 - **The 2009 drought hit the north hardest.** It ran 9 months in the Northern region, the longest regional drought since 1990.
-- **ENSO still shows no effect at the regional scale.** The Indian Ocean Dipole is the more likely driver and the natural next test.
+- **ENSO still shows no effect at the regional scale** using September–November (revised in Part 3).
 
 | Region | Mean annual (mm) | Annual CV | Trend (mm/yr) | Trend p |
 |---|---:|---:|---:|---:|
@@ -37,11 +37,22 @@ An analysis of 36 years of monthly rainfall over Uganda using CHIRPS satellite p
 | Karamoja | 917 | 17.5% | +6.7 | 0.008 |
 | **Uganda (national)** | **1,203** | **8.8%** | **+2.3** | **0.18** |
 
+**Indian Ocean Dipole (Part 3)**
+
+- **The IOD drives much of the short rains' year-to-year swings.** Using October–December rainfall, the IOD index correlates significantly with five of seven series (national r = 0.50, p = 0.002), most strongly in Central (r = 0.59) and the Lake Victoria basin (r = 0.54).
+- **ENSO acts mainly through the IOD.** With the IOD held fixed, ENSO's correlation with the short rains falls to near zero everywhere.
+- **The earlier ENSO null result was partly a window artefact.** September–November leaves out December, when much of the extra rain in strong events falls. 1997 was +36% nationally in Oct–Dec but only +4% in Sep–Nov.
+- **Positive-IOD seasons averaged 18% wetter nationally** (+9% to +25% by region), but the signal leans on strong events: without 1997 and 2019 the correlations fall by about 40%.
+- **The IOD does not explain Karamoja's wetting trend**, which stays significant after controlling for it. Neither index has any link to the long rains (Mar–May).
+
 ## Repository structure
 
 ```
 .
 ├── data/
+│   ├── external/                                   # NOAA climate indices (IOD and ENSO)
+│   │   ├── dmi_monthly.csv                         # Dipole Mode Index, monthly
+│   │   └── oni_seasonal.csv                        # Oceanic Niño Index, 3-month seasons
 │   ├── raw/                                        # exported from Google Earth Engine
 │   │   ├── uganda_monthly_rainfall.csv             # national average, 1990–2025
 │   │   └── uganda_rainfall_by_region_1990_2025.csv # 6 regions + national reference
@@ -50,10 +61,12 @@ An analysis of 36 years of monthly rainfall over Uganda using CHIRPS satellite p
 │       ├── regional_droughts.csv                   # top 5 SPI-3 droughts per region (pipeline)
 │       ├── regional_results.json                   # full results + monthly series behind the regional report
 │       ├── uganda_rainfall_regional_summary.csv    # headline stats per region (notebook 02)
-│       └── uganda_rainfall_regional_droughts.csv   # top 3 droughts per region (notebook 02)
+│       ├── uganda_rainfall_regional_droughts.csv   # top 3 droughts per region (notebook 02)
+│       └── iod_*.csv                               # correlation and trend tables (notebook 03)
 ├── notebooks/
 │   ├── 01_national_analysis.ipynb   # Part 1: national trends, droughts, seasons, ENSO
-│   └── 02_regional_analysis.ipynb   # Part 2: the same analysis, per region
+│   ├── 02_regional_analysis.ipynb   # Part 2: the same analysis, per region
+│   └── 03_iod_analysis.ipynb        # Part 3: Indian Ocean Dipole vs ENSO and the short rains
 ├── figures/                         # README figure (light and dark versions)
 ├── reports/
 │   ├── national_report.html         # standalone write-up of Part 1
@@ -62,6 +75,7 @@ An analysis of 36 years of monthly rainfall over Uganda using CHIRPS satellite p
 │   ├── gee/
 │   │   ├── uganda_national_rainfall_gee.js   # Earth Engine export → data/raw/uganda_monthly_rainfall.csv
 │   │   └── uganda_regional_rainfall_gee.js   # Earth Engine export → data/raw/uganda_rainfall_by_region_1990_2025.csv
+│   ├── fetch_climate_indices.py     # downloads the NOAA indices → data/external/
 │   ├── regional_pipeline.py         # regional analysis as a script → data/processed/regional_*
 │   └── make_readme_figure.py        # builds the figures/ chart from regional_results.json
 ├── LICENSE
@@ -71,8 +85,9 @@ An analysis of 36 years of monthly rainfall over Uganda using CHIRPS satellite p
 ## Workflow
 
 1. **Export:** run the scripts in `scripts/gee/` in the [Earth Engine Code Editor](https://code.earthengine.google.com/) and start the export from the Tasks tab. Each one writes a CSV to Google Drive, which goes in `data/raw/`.
-2. **Analyse:** the notebooks in `notebooks/` contain the full analysis with a written finding after each step. `scripts/regional_pipeline.py` runs the regional analysis non-interactively and writes the tables and JSON in `data/processed/`.
-3. **Report:** the HTML pages in `reports/` present the results.
+2. **Climate indices:** `python scripts/fetch_climate_indices.py` downloads the latest IOD and ENSO indices from NOAA into `data/external/`.
+3. **Analyse:** the notebooks in `notebooks/` contain the full analysis with a written finding after each step. `scripts/regional_pipeline.py` runs the regional analysis non-interactively and writes the tables and JSON in `data/processed/`.
+4. **Report:** the HTML pages in `reports/` present the results.
 
 ## Data
 
@@ -82,7 +97,7 @@ An analysis of 36 years of monthly rainfall over Uganda using CHIRPS satellite p
 
 ### Data sources
 
-The CSVs in this repo are derived rainfall statistics. No boundary files or raw imagery are redistributed. All datasets were accessed through the Google Earth Engine data catalog.
+The rainfall CSVs in this repo are derived statistics. No boundary files or raw imagery are redistributed. Rainfall and boundary datasets were accessed through the Google Earth Engine data catalog; the climate indices come directly from NOAA.
 
 | Dataset | Used for | Provider | Terms |
 |---|---|---|---|
@@ -91,6 +106,8 @@ The CSVs in this repo are derived rainfall statistics. No boundary files or raw 
 | [geoBoundaries ADM1](https://www.geoboundaries.org/) | Central, Eastern, Northern, Western regions | William & Mary geoLab | Open license, attribution required |
 | [HydroSHEDS / HydroBASINS](https://www.hydrosheds.org/) | Lake Victoria basin | WWF | Free use with attribution |
 | [JRC Global Surface Water](https://global-surface-water.appspot.com/) | Open-water mask | European Commission JRC | Free use with attribution |
+| [Dipole Mode Index (HadISST1.1)](https://psl.noaa.gov/gcos_wgsp/Timeseries/DMI/) | Indian Ocean Dipole | NOAA Physical Sciences Laboratory | US Government work, public domain |
+| [Oceanic Niño Index (ERSSTv5)](https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php) | ENSO | NOAA Climate Prediction Center | US Government work, public domain |
 
 **Citations**
 
@@ -98,6 +115,9 @@ The CSVs in this repo are derived rainfall statistics. No boundary files or raw 
 - Runfola, D. et al. (2020). geoBoundaries: A global database of political administrative boundaries. *PLoS ONE* 15(4), e0231866.
 - Lehner, B. & Grill, G. (2013). Global river hydrography and network routing: baseline data and new approaches to study the world's large river systems. *Hydrological Processes* 27(15), 2171–2186.
 - Pekel, J.-F. et al. (2016). High-resolution mapping of global surface water and its long-term changes. *Nature* 540, 418–422.
+- Saji, N. H. et al. (1999). A dipole mode in the tropical Indian Ocean. *Nature* 401, 360–363.
+- Rayner, N. A. et al. (2003). Global analyses of sea surface temperature, sea ice, and night marine air temperature since the late nineteenth century. *Journal of Geophysical Research* 108(D14), 4407.
+- Huang, B. et al. (2017). Extended Reconstructed Sea Surface Temperature, Version 5 (ERSSTv5). *Journal of Climate* 30(20), 8179–8205.
 
 ## Methods
 
@@ -110,9 +130,11 @@ The CSVs in this repo are derived rainfall statistics. No boundary files or raw 
   - Comparison of the long rains (MAM) and short rains (SON).
   - Decadal means and coefficient of variation.
   - Trend/seasonal/residual decomposition.
-- **Teleconnections:** comparison of El Niño, La Niña and neutral years.
+- **Teleconnections:**
+  - Parts 1–2: comparison of El Niño, La Niña and neutral years.
+  - Part 3: correlation of seasonal rainfall with the IOD (DMI) and ENSO (ONI) indices, partial correlations to separate the two, composites by IOD phase, and trend regressions that control for the IOD.
 - **Persistence:** autocorrelation of monthly anomalies.
-- **Multiple testing:** about 35 tests were run in Part 2, so results near p ≈ 0.04 are treated as suggestive. The key results are checked against a Bonferroni threshold.
+- **Multiple testing:** about 35 tests were run in Part 2 and 63 in Part 3, so results near p ≈ 0.04 are treated as suggestive. Key results are checked against a Bonferroni threshold (Part 2) and the Benjamini–Hochberg false discovery rate (Part 3).
 
 ## Reproducing the analysis
 
@@ -136,7 +158,9 @@ The HTML reports in `reports/` open directly in a browser, or online via the lin
 
 - CHIRPS is a satellite–gauge blend. It is less reliable over open water and complex terrain, and it is not a substitute for station records.
 - The four administrative regions stand in for agro-ecological zones.
-- The ENSO classification is year-based and coarse. Testing the Indian Ocean Dipole (IOD) index is the obvious next step.
+- The IOD and ENSO overlap heavily: all six positive-IOD seasons since 1990 coincided with El Niño, so the two can be separated only partly.
+- 36 years contain few strong IOD events, and the IOD signal depends heavily on two of them (1997 and 2019).
+- Karamoja's wetting trend remains unexplained. Checking it against station records or a second rainfall product (ERA5, TAMSAT) is the natural next step.
 
 ## License
 

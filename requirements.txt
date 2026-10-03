@@ -2,4 +2,5 @@ pandas>=2.2,<3
 numpy>=1.26,<2
 scipy>=1.11,<2
 matplotlib>=3.8,<4
+statsmodels>=0.14,<1
 jupyter>=1.0
