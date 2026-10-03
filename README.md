@@ -38,7 +38,11 @@ An analysis of 36 years of monthly rainfall over Uganda using CHIRPS satellite p
 │   ├── raw/                     # CHIRPS monthly rainfall exported from Google Earth Engine
 │   │   ├── uganda_monthly_rainfall.csv                # national average, 1990–2025
 │   │   └── uganda_rainfall_by_region_1990_2025.csv    # 6 regions + national reference
-│   └── processed/               # summary tables written by the regional notebook
+│   └── processed/
+│       ├── uganda_rainfall_regional_summary.csv    # per-region stats (written by notebook 02)
+│       ├── uganda_rainfall_regional_droughts.csv   # top 3 droughts per region (written by notebook 02)
+│       ├── regional_report_summary.csv             # full per-region metrics behind the regional report
+│       └── regional_report_droughts.csv            # top 5 droughts per region, as in the report
 ├── notebooks/
 │   ├── 01_national_analysis.ipynb   # Part 1: national trends, droughts, seasons, ENSO
 │   └── 02_regional_analysis.ipynb   # Part 2: the same pipeline, per region
