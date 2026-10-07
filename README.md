@@ -11,7 +11,10 @@ An analysis of 36 years of monthly rainfall over Uganda using CHIRPS satellite p
 
 Individual reports: [Part 1 · National](https://tayeruta.github.io/uganda-rainfall-analysis/reports/national_report.html) · [Part 2 · Regional](https://tayeruta.github.io/uganda-rainfall-analysis/reports/regional_report.html) · [Part 3 · Indian Ocean Dipole](https://tayeruta.github.io/uganda-rainfall-analysis/reports/iod_report.html)
 
-**Follow-on project:** [Rainfall shocks and food prices in Uganda](https://github.com/TayeRuta/uganda-food-prices) links these rainfall results to WFP market prices.
+**Follow-on projects** build on these rainfall results:
+- [Rainfall shocks and food prices](https://github.com/TayeRuta/uganda-food-prices): WFP market prices against rainfall and the Indian Ocean Dipole
+- [Uganda coffee](https://github.com/TayeRuta/uganda-coffee): exports, prices, climate exposure and a global benchmark
+- [Uganda irrigation](https://github.com/TayeRuta/uganda-irrigation): where irrigation is needed and where water is within reach
 
 ## Key findings
 
