@@ -1,5 +1,7 @@
 # Uganda Rainfall Variability & Drought Analysis (1990–2025)
 
+> Part of a series on Uganda's agriculture. **[Read the synthesis of all five analyses →](https://tayeruta.github.io/uganda-agriculture/)**
+
 An analysis of 36 years of monthly rainfall over Uganda using CHIRPS satellite precipitation data. It covers long-term trends, drought episodes, the two rainy seasons and decadal shifts, first at the national level and then for six regions, and finally tests how the Indian Ocean Dipole and ENSO drive the short rains.
 
 <picture>
