@@ -15,6 +15,7 @@ Individual reports: [Part 1 · National](https://tayeruta.github.io/uganda-rainf
 - [Rainfall shocks and food prices](https://github.com/TayeRuta/uganda-food-prices): WFP market prices against rainfall and the Indian Ocean Dipole
 - [Uganda coffee](https://github.com/TayeRuta/uganda-coffee): exports, prices, climate exposure and a global benchmark
 - [Uganda irrigation](https://github.com/TayeRuta/uganda-irrigation): where irrigation is needed and where water is within reach
+- [Uganda food trade](https://github.com/TayeRuta/uganda-food-trade): staple food trade with neighbouring countries, source gaps and price links
 
 ## Key findings
 
